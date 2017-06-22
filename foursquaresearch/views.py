@@ -35,4 +35,4 @@ def search_bar(request):
 
         previous_searches = PreviousSearches.objects.filter(created_date__lte=timezone.now()).order_by('created_date')
         form = FoursquareSearchForm()
-        return render(request, 'foursquaresearch/imlookingfor.html', {'form': form})
+        return render(request, 'foursquaresearch/imlookingfor.html', {'form': form}, {'previous_searches': previous_searches})

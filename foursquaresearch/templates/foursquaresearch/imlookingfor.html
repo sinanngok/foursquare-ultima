@@ -1,5 +1,27 @@
-<form action="/imlookingfor/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="OK" />
-</form>
+<html>
+    <head>
+        <title>Foursquare Ultima</title>
+    </head>
+    <body>
+        <div>
+            <h1>The Ultimate Foursquare Client</h1>
+        </div>
+
+        <div>
+          <form action="/imlookingfor/" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="OK" />
+          </form>
+        </div>
+
+        <div>
+            <h2>Results</h2>
+        </div>
+
+        <div>
+            <h2>Previous Searches</h2>
+            {{ previous_searches }}
+        </div>
+    </body>
+</html>
