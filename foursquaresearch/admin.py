@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import PreviousSearches
+from .models import PreviousSearch
 
-admin.site.register(PreviousSearches)
+admin.site.register(PreviousSearch)

@@ -17,6 +17,6 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^foursquaresearch/', include('foursquaresearch.urls')),
+    url(r'', include('foursquaresearch.urls')),
     url(r'^admin/', admin.site.urls),
 ]

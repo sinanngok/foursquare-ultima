@@ -2,6 +2,6 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    #url(r'^$', views.index, name='index'),
-    url(r'^$', views.search_bar, name='search_bar'),
+    url(r'^$', views.index, name='index'),
+    url(r'^$', views.search_history, name='search_history'),
 ]
