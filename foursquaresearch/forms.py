@@ -2,8 +2,11 @@ from django import forms
 from .models import PreviousSearch
 
 class FoursquareSearchForm(forms.ModelForm):
-    """search_key = forms.CharField(max_length=200, widget=forms.TextInput({ "placeholder": "I am looking for..."}), label='')
+    """
+    # I was using this part first but I think using a forms.ModelForm is better to hold the submited data
+    search_key = forms.CharField(max_length=200, widget=forms.TextInput({ "placeholder": "I am looking for..."}), label='')
     search_location = forms.CharField(max_length=200, widget=forms.TextInput({ "placeholder": "Location"}), label='')
+
     """
 
     class Meta:
