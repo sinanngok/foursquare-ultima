@@ -15,21 +15,19 @@
           {% endblock %}
         </div>
         <div>
-          {% for venue in venues %}
-          {{venue.name}} {{venue.stats.checkinsCount}}<br>
-          {%empty%}
-          No Results<br><br>
-          {%endfor%}
-          <br>
+
+        </div>
+
+        <div>
+            <h2>Results</h2>
         </div>
         <div>
-
-          Previous Searches<br>
-
-          {%for i in history|slice:":5"%}
-          - {{i.search_key}} in {{i.search_location}}<br>
-          {%endfor%}
-
+            <h2>Previous Searches</h2>
+            {% for item in history %}
+            <div>
+              <p>{{ item.search_key }}</p>
+            </div>
+            {% endfor %}
         </div>
 
 
