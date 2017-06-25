@@ -15,11 +15,20 @@
           {% endblock %}
         </div>
         <div>
-          {% for venue in venues %}
-          {{venue.name}} {{venue.stats.checkinsCount}}<br>
-          {%empty%}
-          No Results<br><br>
-          {%endfor%}
+          <table>
+            <tr>
+              <th>Name</th>
+              <th>Checkins</th>
+            </tr>
+            <tr>
+            {% for venue in venues %}
+            <td>{{venue.name}}</td>
+            <td>{{venue.stats.checkinsCount}}</td>
+            </tr>
+            {%empty%}
+            {{error}}<br><br>
+            {%endfor%}
+          </table>
           <br>
         </div>
         <div>

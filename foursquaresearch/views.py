@@ -10,11 +10,11 @@ from .forms import FoursquareSearchForm
 
 def index(request):
     history = PreviousSearch.objects.order_by('-created_date')
-    form = FoursquareSearchForm(request.POST)
     API_ADRESS = "https://api.foursquare.com/v2/venues/search?client_id="
     CLIENT_ID ="V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK"
     CLIENT_SECRET = "L5RZFRA1K2KPH33H12BFD3MECOJKEBIJSLP14KXYRYW3A5AF"
     YYYYMMDD = "20170620"
+
 
     if request.method == "POST":
 
@@ -24,32 +24,46 @@ def index(request):
             new_search = form.save(commit=False)
             new_search.created_date = timezone.now()
             new_search.save()
-            
+
             location = new_search.search_location
             what_to_look = new_search.search_key
 
             url = API_ADRESS + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&near=" + location + "&query=" + what_to_look + "&v=" + YYYYMMDD + "&m=foursquare"
             response = requests.get(url)
             data = response.json()
-            venues = data["response"]["venues"]
-            #PreviousSearch.objects.create(search_key=what_to_look, search_location=location)
-            #new_search = form.save(commit=False)
-            #new_search.created_date = timezone.now()
-            #new_search.save()
+
+            if data["meta"]["code"]==200:
+
+                venues = data["response"]["venues"]
+                return render(request, 'foursquaresearch/imlookingfor.html', {
+                'history': history,
+                "venues": venues,
+                'form': form,
+                })
+
+            else:
+                venues = []
+                error = "Noting is found please try again"
+                return render(request, 'foursquaresearch/imlookingfor.html', {
+                'history': history,
+                "venues": venues,
+                'form': form,
+                'error': error
+                })
+
+
+
 
 
     else:
         venues = []
         form = FoursquareSearchForm()
-        return render(request, 'foursquaresearch/imlookingfor.html', {
-        'history': history,
-        'form': form
-        })
+
 
     return render(request, 'foursquaresearch/imlookingfor.html', {
     'history': history,
     "venues": venues,
-    'form': form
+    'form': form,
     })
 
 def search_history(request):
