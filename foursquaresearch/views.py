@@ -14,17 +14,13 @@ def index(request):
     CLIENT_ID ="V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK"
     CLIENT_SECRET = "L5RZFRA1K2KPH33H12BFD3MECOJKEBIJSLP14KXYRYW3A5AF"
     YYYYMMDD = "20170620"
-
+    search = False
 
     if request.method == "POST":
-
         form = FoursquareSearchForm(request.POST)
 
         if form.is_valid():
             new_search = form.save(commit=False)
-            new_search.created_date = timezone.now()
-            new_search.save()
-
             location = new_search.search_location
             what_to_look = new_search.search_key
 
@@ -32,38 +28,33 @@ def index(request):
             response = requests.get(url)
             data = response.json()
 
-            if data["meta"]["code"]==200:
-
+            if data["meta"]["code"]==200:   #checks if the location parameter is true
                 venues = data["response"]["venues"]
-                return render(request, 'foursquaresearch/imlookingfor.html', {
-                'history': history,
-                "venues": venues,
-                'form': form,
-                })
+
+                if bool(venues):    #checks if there is anything found
+                    new_search.created_date = timezone.now()
+                    new_search.save()
+                    error = ""
+                    search = True
+
+                else:
+                    error = "There is nothing to show."
 
             else:
                 venues = []
-                error = "Noting is found please try again"
-                return render(request, 'foursquaresearch/imlookingfor.html', {
-                'history': history,
-                "venues": venues,
-                'form': form,
-                'error': error
-                })
-
-
-
-
+                error = "Location not found, please try somewhere else."
 
     else:
         venues = []
         form = FoursquareSearchForm()
-
+        error = ""
 
     return render(request, 'foursquaresearch/imlookingfor.html', {
     'history': history,
     "venues": venues,
     'form': form,
+    'error': error,
+    'search': search
     })
 
 def search_history(request):

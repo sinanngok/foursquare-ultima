@@ -14,6 +14,7 @@
           </form>
           {% endblock %}
         </div>
+        {% if search %}
         <div>
           <table>
             <tr>
@@ -22,26 +23,22 @@
             </tr>
             <tr>
             {% for venue in venues %}
-            <td>{{venue.name}}</td>
-            <td>{{venue.stats.checkinsCount}}</td>
+            <td>{{ venue.name }}</td>
+            <td>{{ venue.stats.checkinsCount }}</td>
             </tr>
-            {%empty%}
+            {% empty %}
             {{error}}<br><br>
-            {%endfor%}
+            {% endfor %}
           </table>
           <br>
         </div>
+        {% endif %}
         <div>
-
           Previous Searches<br>
 
-          {%for i in history|slice:":5"%}
-          - {{i.search_key}} in {{i.search_location}}<br>
-          {%endfor%}
-
+          {% for i in history|slice:":5" %}
+          - {{ i.search_key }} in {{ i.search_location }}<br>
+          {% endfor %}
         </div>
-
-
-
     </body>
 </html>
