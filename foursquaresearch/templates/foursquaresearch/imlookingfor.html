@@ -18,24 +18,31 @@
         </div>
         <br><br>
         <div class="row">
-          <div class="col-sm-4">
+          <div class="col-sm-5">
             <center>
             {% block content %}
-            <form action="{% url 'index' %}" method="get">
-              <input type="text" name="look_for" placeholder= "I am looking for..."><br>
-              <input type="text" name="location" placeholder= "Location"><br>
-              <input type="submit" value="OK">
+            <br><br>
+            <form class="form-inline" action="{% url 'index' %}" method="get">
+              <input type="text" name="look_for" placeholder= "I am looking for...">
+              <input type="text" name="location" placeholder= "Location">
+              <button type="submit" class="btn">OK</button>
             </form>
             {% endblock %}
             </center>
           </div>
-          <div class="col-sm-4">
+          <div class="col-sm-2">
             <center>
-            Previous Searches<br>
+              <h3>Previous Searches<br>
+            <table class="table table-striped">
 
-            {% for i in history|slice:":5" %}
-            - {{ i.search_key }} in {{ i.search_location }}<br>
-            {% endfor %}
+              {% for i in history|slice:":5" %}
+              <tr>
+                <td>{{ i.search_key }}</td>
+                <td>in</td>
+                <td>{{ i.search_location }}</td>
+              </tr>
+              {% endfor %}
+            </table>
             </center>
           </div>
         </div>
@@ -44,7 +51,7 @@
           <div class="col-sm-2">
           </div>
           <div class="col-sm-4">
-            <table>
+            <table class="table table-hover">
               <tr>
                 <th>Name</th>
                 <th>Checkins</th>
