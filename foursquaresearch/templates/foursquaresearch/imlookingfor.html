@@ -18,6 +18,8 @@
         </div>
         <br><br>
         <div class="row">
+          <div class="col-sm-1">
+          </div>
           <div class="col-sm-5">
             <center>
             {% block content %}
@@ -30,6 +32,33 @@
             {% endblock %}
             </center>
           </div>
+        </div>
+        <div class="row">
+        {% if search %}
+          <div class="col-sm-1">
+          </div>
+          <div class="col-sm-3">
+            <h3> Results <br><br>
+            <table class="table table-bordered">
+              <tr>
+                <th>Name</th>
+                <th>Checkins</th>
+              </tr>
+              <tr>
+              {% for venue in venues %}
+              <td>{{ venue.name }}</td>
+              <td>{{ venue.stats.checkinsCount }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
+          <div class="col-sm-1">
+          </div>
+          {% elif not search %}
+          <div class="col-sm-5">
+            {{error}}<br><br>
+          </div>
+          {% endif %}
           <div class="col-sm-2">
             <center>
               <h3>Previous Searches<br>
@@ -46,30 +75,7 @@
             </center>
           </div>
         </div>
-        {% if search %}
-        <div class="row">
-          <div class="col-sm-2">
-          </div>
-          <div class="col-sm-4">
-            <table class="table table-hover">
-              <tr>
-                <th>Name</th>
-                <th>Checkins</th>
-              </tr>
-              <tr>
-              {% for venue in venues %}
-              <td>{{ venue.name }}</td>
-              <td>{{ venue.stats.checkinsCount }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-          </div>
-          {% elif not search %}
-          <div class="col-sm-4">
-            {{error}}<br><br>
-          </div>
-        </div>
-        {% endif %}
+
 
     </body>
 </html>
