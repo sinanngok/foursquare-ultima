@@ -8,9 +8,10 @@
         </div>
         <div>
           {% block content %}
-          <form method="POST" class="post-form">{% csrf_token %}
-            {{ form }}
-            <button type="submit" class="save btn btn-default">OK</button>
+          <form action="{% url 'index' %}" method="get">
+            <input type="text" name="look_for" placeholder= "I am looking for..."><br>
+            <input type="text" name="location" placeholder= "Location"><br>
+            <input type="submit" value="OK">
           </form>
           {% endblock %}
         </div>
@@ -26,11 +27,13 @@
             <td>{{ venue.name }}</td>
             <td>{{ venue.stats.checkinsCount }}</td>
             </tr>
-            {% empty %}
-            {{error}}<br><br>
             {% endfor %}
           </table>
           <br>
+        </div>
+        {% elif not search %}
+        <div>
+          {{error}}<br><br>
         </div>
         {% endif %}
         <div>
