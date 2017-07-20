@@ -1,0 +1,23 @@
+{% extends 'foursquaresearch/header.html' %}
+
+        {% block body %}
+        <div class="row">
+          <div class="col-sm-1">
+          </div>
+          <div class="col-sm-5">
+            <center>
+            <br><br>
+            <form class="form-inline" action="{% url 'index' %}" method="get">
+              <input type="text" name="look_for" placeholder= "I am looking for...">
+              <input type="text" name="location" placeholder= "Location">
+              <button type="submit" class="btn btn-primary">OK</button>
+            </form>
+            </center>
+          </div>
+        </div>
+        <div class="row">
+        {% block search %}
+        {% endblock %}
+        {% endblock %}
+    </body>
+</html>

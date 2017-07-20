@@ -1,81 +1,50 @@
-<html>
-    <head>
-        <title>Foursquare Ultima</title>
-        {% load staticfiles %}
-        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type = "text/css"/>
-	       <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+{% extends 'foursquaresearch/base.html' %}
 
+{% block search %}
+  {% if search %}
+    <div class="col-sm-1">
+    </div>
+    <div class="col-sm-3">
+      <h3> Results for {{ what_to_look }} in {{ location }}
+        <br><br></h3>
+      <table class="table table-bordered">
+        <tr>
+          <th>Name</th>
+          <th>Checkins</th>
+        </tr>
+        <tr>
+        {% for venue in venues %}
+        <td>{{ venue.name }}</td>
+        <td>{{ venue.stats.checkinsCount }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="col-sm-1">
+    </div>
+    {% elif not search %}
+    <div class="col-sm-1">
+    </div>
+    <div class="col-sm-4">
+      <br>
+      {{error}}<br>
+    </div>
+  {% endif %}
+  <div class="col-sm-2">
+    <center>
+      <h3>Previous Searches<br></h3>
+    <table class="table table-striped">
 
+      {% for i in history|slice:":5" %}
+      <tr>
+        <td>{{ i.search_key }}</td>
+        <td>in</td>
+        <td>{{ i.search_location }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    </center>
+  </div>
+</div>
 
-    </head>
-    <body class="body" style="background-color:#f6f6f6">
-        <div class="row">
-          <div class="col-sm-8">
-            <center>
-              <h1><a href=/>The Ultimate Foursquare Client</a></h1>
-            </center>
-          </div>
-        </div>
-        <br><br>
-        <div class="row">
-          <div class="col-sm-1">
-          </div>
-          <div class="col-sm-5">
-            <center>
-            {% block content %}
-            <br><br>
-            <form class="form-inline" action="{% url 'index' %}" method="get">
-              <input type="text" name="look_for" placeholder= "I am looking for...">
-              <input type="text" name="location" placeholder= "Location">
-              <button type="submit" class="btn">OK</button>
-            </form>
-            {% endblock %}
-            </center>
-          </div>
-        </div>
-        <div class="row">
-        {% if search %}
-          <div class="col-sm-1">
-          </div>
-          <div class="col-sm-3">
-            <h3> Results <br><br>
-            <table class="table table-bordered">
-              <tr>
-                <th>Name</th>
-                <th>Checkins</th>
-              </tr>
-              <tr>
-              {% for venue in venues %}
-              <td>{{ venue.name }}</td>
-              <td>{{ venue.stats.checkinsCount }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-          </div>
-          <div class="col-sm-1">
-          </div>
-          {% elif not search %}
-          <div class="col-sm-5">
-            {{error}}<br><br>
-          </div>
-          {% endif %}
-          <div class="col-sm-2">
-            <center>
-              <h3>Previous Searches<br>
-            <table class="table table-striped">
-
-              {% for i in history|slice:":5" %}
-              <tr>
-                <td>{{ i.search_key }}</td>
-                <td>in</td>
-                <td>{{ i.search_location }}</td>
-              </tr>
-              {% endfor %}
-            </table>
-            </center>
-          </div>
-        </div>
-
-
-    </body>
-</html>
+{% endblock %}

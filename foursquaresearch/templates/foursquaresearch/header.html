@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Foursquare Ultima</title>
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type = "text/css"/>
+	       <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    </head>
+    <body >
+      <div class="row">
+        <div class="col-sm-8">
+          <center>
+            <h1><a href=/>The Ultimate Foursquare Client</a></h1>
+          </center>
+        </div>
+        <div class="col-sm-1">
+          <h5><a href={% url 'registration' %}>Register</a></h5>
+        </div>
+        <div class="col-sm-1">
+          <h5><a href="{% url 'login_view' %}">Login</a></h5>
+        </div>
+      </div>
+      <br><br>
+      {% block body %}
+      {% endblock %}
+    </body>
+</html>

@@ -6,8 +6,6 @@ import json
 
 from .models import PreviousSearch
 
-from .forms import FoursquareSearchForm
-
 
 def Get_Foursquare_Results(location, what_to_look, venues, error, search):
     API_ADRESS = "https://api.foursquare.com/v2/venues/search?client_id="
