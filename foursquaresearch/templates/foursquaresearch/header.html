@@ -13,12 +13,23 @@
             <h1><a href=/>The Ultimate Foursquare Client</a></h1>
           </center>
         </div>
-        <div class="col-sm-1">
-          <h5><a href={% url 'registration' %}>Register</a></h5>
-        </div>
-        <div class="col-sm-1">
-          <h5><a href="{% url 'login_view' %}">Login</a></h5>
-        </div>
+        <div>
+          {% if logged_in %}
+          <div class="col-sm-1">
+            <h5>Hi, {{ username }} :)</a></h5>
+          </div>
+          <div class="col-sm-1">
+            <h5><a href="{% url 'logout_view' %}">Logout</a></h5>
+          </div>
+          {% elif not logged_in %}
+          <div class="col-sm-1">
+            <h5><a href={% url 'registration' %}>Register</a></h5>
+          </div>
+          <div class="col-sm-1">
+            <h5><a href="{% url 'login_view' %}">Login</a></h5>
+          </div>
+          {% endif %}
+      </div>
       </div>
       <br><br>
       {% block body %}

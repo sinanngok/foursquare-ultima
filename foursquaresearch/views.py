@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 import requests
 import json
@@ -19,6 +19,12 @@ def index(request):
     search = False
     error = ''
     venues = []
+    logged_in = False
+    username = None
+
+    if request.user.is_authenticated():
+        logged_in = True
+        username = request.user.username
 
     if request.method == "GET":
 
@@ -35,7 +41,9 @@ def index(request):
         'what_to_look': what_to_look,
         'venues': venues,
         'error': error,
-        'search': search
+        'search': search,
+        'logged_in': logged_in,
+        'username': username
         })
 
 def registration(request):
@@ -75,3 +83,7 @@ def login_view(request):
         return render(request, 'foursquaresearch/login.html', {
         'form': form,
         })
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
