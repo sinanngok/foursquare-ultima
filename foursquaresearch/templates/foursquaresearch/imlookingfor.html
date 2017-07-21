@@ -16,6 +16,9 @@
         {% for venue in venues %}
         <td>{{ venue.name }}</td>
         <td>{{ venue.stats.checkinsCount }}</td>
+        {% if logged_in %}
+        <td>star</td>
+        {% endif %}
         </tr>
         {% endfor %}
       </table>
