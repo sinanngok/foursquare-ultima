@@ -1,0 +1,48 @@
+{% extends 'foursquaresearch/base.html' %}
+
+{% block favorites %}
+    <div class="col-sm-1">
+    </div>
+    <div class="col-sm-3">
+      <h3>Favorite Places<br></h3>
+      <table class="table table-bordered">
+        <tr>
+          <th>Place</th>
+          <th>Address</th>
+        </tr>
+        <tr>
+        {% for fav in favs %}
+        <td>{{ fav.place.name }}</td>
+        <td>{{ fav.place.location }}</td>
+        <td>
+          <form action={% url 'remove_from_favorites' %} method="post">
+            {% csrf_token %}
+            <input type="hidden" name="name" value="{{ fav.place.name }}"/>
+            <input type="hidden" name="location" value="{{ fav.place.location }}"/>
+            <button type="submit" class="btn-link">DEL</button>
+          </form>
+        </td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="col-sm-1">
+    </div>
+  <div class="col-sm-2">
+    <center>
+      <h3>Previous Searches<br></h3>
+    <table class="table table-striped">
+
+      {% for i in history|slice:":5" %}
+      <tr>
+        <td>{{ i.search_key }}</td>
+        <td>in</td>
+        <td>{{ i.search_location }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    </center>
+  </div>
+</div>
+
+{% endblock %}

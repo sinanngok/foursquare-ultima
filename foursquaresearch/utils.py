@@ -1,13 +1,14 @@
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
 from django.utils import timezone
 import requests
 import json
 
-from .models import PreviousSearch
+from .models import PreviousSearch, UserSearch
 
 
-def Get_Foursquare_Results(location, what_to_look, venues, error, search):
+def Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, logged_in):
     API_ADRESS = "https://api.foursquare.com/v2/venues/search?client_id="
     CLIENT_ID ="V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK"
     SECRET_TOKEN = "&client_secret="
@@ -31,12 +32,10 @@ def Get_Foursquare_Results(location, what_to_look, venues, error, search):
         if bool(venues):    #checks if there is anything found
             PreviousSearch.objects.create(search_key=what_to_look, search_location=location)
             error = ""
-            search = True
-
+            is_searched = True
         else:
             error = "There is nothing to show."
     else:
         error = "Location not found, please try somewhere else."
 
-
-    return (location, what_to_look, venues, error, search)
+    return (location, what_to_look, venues, error, is_searched)

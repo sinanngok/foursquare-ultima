@@ -24,8 +24,8 @@
               <span class="caret"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-              <li><a href="#">Favorites</a></li>
-              <li><a href="#">Search history</a></li>
+              <li><a href="{% url 'favorites' %}">Favorites</a></li>
+              <li><a href="{% url 'user_search_history' %}">Search history</a></li>
               <li role="separator" class="divider"></li>
               <li><a href="{% url 'logout_view' %}">Logout</a></li>
             </ul>
