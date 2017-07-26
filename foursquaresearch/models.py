@@ -18,39 +18,14 @@ class Place(models.Model):
         return self.name
 
 class Favorite(models.Model):
-    user = models.ForeignKey(
-        User,
-        models.SET_NULL,
-        blank=True,
-        null=True,
-        )
-    place = models.ForeignKey(
-        'Place',
-        on_delete=models.CASCADE,
-    )
-
+    user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True,)
+    place = models.ForeignKey('Place', on_delete=models.CASCADE,)
     def __str__(self):
         return self.place.name
 
 class UserSearch(models.Model):
-    user = models.ForeignKey(
-        User,
-        models.SET_NULL,
-        blank=True,
-        null=True,
-        )
-    search = models.ForeignKey(
-        'PreviousSearch',
-        on_delete=models.CASCADE,
-    )
+    user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True,)
+    search = models.ForeignKey('PreviousSearch', on_delete=models.CASCADE,)
 
     def __str__(self):
         return self.search.search_key
-
-class Fav(models.Model):
-    place_name = models.CharField(max_length=200)
-    location = models.CharField(max_length=200)
-    user = models.ManyToManyField(User)
-
-    def __str__(self):
-        return self.name

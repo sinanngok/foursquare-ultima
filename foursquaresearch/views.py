@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import requests
 
-from .models import PreviousSearch, Favorite, UserSearch, Place, Fav
+from .models import PreviousSearch, Favorite, UserSearch, Place
 
 from .forms import RegistrationForm, UserLoginForm
 
@@ -113,6 +113,8 @@ def registration(request):
 
 def login_view(request):
     form = UserLoginForm(request.POST)
+    error = False
+    error_message = ""
     if request.method == "POST":
 
         if form.is_valid():
@@ -125,10 +127,21 @@ def login_view(request):
                     login(request, user)
                     return redirect('index')
 
+        else:
+            form = UserLoginForm()
+            error = True
+            error_message = "Please enter the correct username and password. Note that both fields may be case-sensitive."
+            return render(request, 'foursquaresearch/login.html', {
+            'error' : error,
+            'error_message': error_message,
+            })
+
     else:
         form = UserLoginForm()
         return render(request, 'foursquaresearch/login.html', {
         'form': form,
+        'error' : error,
+        'error_message': error_message,
         })
 
 def logout_view(request):
