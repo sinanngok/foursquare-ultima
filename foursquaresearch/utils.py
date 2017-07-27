@@ -5,10 +5,10 @@ from django.utils import timezone
 import requests
 import json
 
-from .models import PreviousSearch, UserSearch
+from .models import PreviousSearch
 
 
-def Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, logged_in):
+def Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, logged_in, user):
     API_ADRESS = "https://api.foursquare.com/v2/venues/search?client_id="
     CLIENT_ID ="V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK"
     SECRET_TOKEN = "&client_secret="
@@ -30,7 +30,7 @@ def Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, l
         venues = data["response"]["venues"]
 
         if bool(venues):    #checks if there is anything found
-            PreviousSearch.objects.create(search_key=what_to_look, search_location=location)
+            PreviousSearch.objects.create(user=user, search_key=what_to_look, search_location=location)
             error = ""
             is_searched = True
         else:
@@ -39,3 +39,11 @@ def Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, l
         error = "Location not found, please try somewhere else."
 
     return (location, what_to_look, venues, error, is_searched)
+
+def get_history(logged_in, user):
+    if logged_in:
+        history = PreviousSearch.objects.filter(user=user.id).order_by('-created_date')
+    else:
+        history = PreviousSearch.objects.order_by('-created_date')
+
+    return (history)

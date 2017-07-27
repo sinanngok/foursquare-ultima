@@ -1,11 +1,11 @@
 from django.core import serializers
 from django.contrib.auth.models import User
 from django.contrib import admin
-from .models import PreviousSearch, Favorite, UserSearch, Place
+from .models import PreviousSearch, Favorite, Place
 
 class HistoryAdmin(admin.ModelAdmin):
     fields = ['search_key', 'search_location']
-    list_display = ('search_key', 'search_location', 'created_date')
+    list_display = ('user', 'search_key', 'search_location', 'created_date')
 
 admin.site.register(PreviousSearch, HistoryAdmin)
 
@@ -20,9 +20,3 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'place')
 
 admin.site.register(Favorite, FavoriteAdmin)
-
-class UserSearchAdmin(admin.ModelAdmin):
-    fields = ['user', 'search']
-    list_display = ('user', 'search')
-
-admin.site.register(UserSearch, UserSearchAdmin)

@@ -1,28 +1,17 @@
-{% extends 'foursquaresearch/base.html' %}
+{% block prev_searches %}
+<div class="col-sm-2">
+  <center>
+    <h3>Previous Searches<br></h3>
+  <table class="table table-striped">
 
-{% block userhistory %}
-    <div class="col-sm-1">
-    </div>
-    <div class="col-sm-4">
-      <h3>Your search history<br><br></h3>
-        <center>
-        <table class="table table-striped">
-            <tr>
-              <th>Place</th>
-              <th>Address</th>
-              <th>Date</th>
-            </tr>
-            {% for h in history|slice:":5" %}
-            <tr>
-              <td>{{ h.search.search_key }}</td>
-              <td>{{ h.search.search_location }}</td>
-              <td>{{ h.search.created_date }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-        </center>
-        <div class="col-sm-4">
-
-        </div>
-      </div>
+    {% for h in history|slice:":5" %}
+    <tr>
+      <td>{{ h.search_key }}</td>
+      <td>in</td>
+      <td>{{ h.search_location }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </center>
+</div>
 {% endblock %}

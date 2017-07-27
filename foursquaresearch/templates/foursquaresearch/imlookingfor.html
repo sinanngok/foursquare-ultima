@@ -41,21 +41,5 @@
       {{error}}<br>
     </div>
   {% endif %}
-  <div class="col-sm-2">
-    <center>
-      <h3>Previous Searches<br></h3>
-    <table class="table table-striped">
-
-      {% for i in history|slice:":5" %}
-      <tr>
-        <td>{{ i.search_key }}</td>
-        <td>in</td>
-        <td>{{ i.search_location }}</td>
-      </tr>
-      {% endfor %}
-    </table>
-    </center>
-  </div>
-</div>
 
 {% endblock %}
