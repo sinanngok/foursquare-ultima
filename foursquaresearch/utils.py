@@ -26,11 +26,14 @@ def get_foursquare_results(location, what_to_look, venues, error, is_searched, l
     response = requests.get(url)
     data = response.json()
 
-    if data["meta"]["code"]==200:   #checks if the location parameter is true
+    if response.status_code == 200:   #checks if the location parameter is true
         venues = data["response"]["venues"]
 
-        if bool(venues):    #checks if there is anything found
-            PreviousSearch.objects.create(user=user, search_key=what_to_look, search_location=location)
+        if venues:    #checks if there is anything found
+            if logged_in:
+                PreviousSearch.objects.create(user=user, search_key=what_to_look, search_location=location)
+            else:
+                PreviousSearch.objects.create(search_key=what_to_look, search_location=location)
             error = ""
             is_searched = True
         else:

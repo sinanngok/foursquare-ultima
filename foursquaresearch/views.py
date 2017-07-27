@@ -24,7 +24,7 @@ def index(request):
     if request.user.is_authenticated():
         logged_in = True
     history = get_history(logged_in, user)
-
+    print (user)
     if request.method == "GET":
 
         if look_for and location:
@@ -48,14 +48,13 @@ def add_to_favorites(request):
         location = request.POST['location']
         obj, created = Place.objects.get_or_create(name=name, location=location)
         Favorite.objects.create(user=request.user, place=obj)
-
         return redirect('index')
 
 def remove_from_favorites(request):
 
     if request.method == "POST":
         place_id = request.POST['id']
-        Favorite.objects.filter(user=request.user, place=Place.objects.filter(id=place_id)).delete()
+        Favorite.objects.filter(user=request.user, place=Place.objects.get(id=place_id)).delete()
         return redirect('favorites')
 
 def favorites(request):
@@ -63,7 +62,7 @@ def favorites(request):
     user = request.user
     history = get_history(logged_in, user)
     favorites_list = Favorite.objects.filter(user=request.user)
-    paginator = Paginator(favorites_list, 3) # Show 25 contacts per page
+    paginator = Paginator(favorites_list, 3) # Show 10 contacts per page
 
     page = request.GET.get('page')
     try:
@@ -75,29 +74,15 @@ def favorites(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         favorites = paginator.page(paginator.num_pages)
 
+    num_pages = range(1, favorites.paginator.num_pages+1)
+
     return render(request, 'foursquaresearch/favorites.html', {
     'history': history,
+    'num_pages': num_pages,
     'favorites': favorites,
     'logged_in': logged_in,
     'username': user.username
     })
-
-def listing(request):
-    favorites_list = Favorite.objects.filter(user=request.user)
-    paginator = Paginator(favorites_list, 10) # Show 25 contacts per page
-
-    page = request.GET.get('page')
-    try:
-        favorites = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        favorites = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        favorites = paginator.page(paginator.num_pages)
-
-    return render(request, 'list.html', {'favorites': favorites})
-
 
 def registration(request):
     if request.method == "POST":

@@ -26,7 +26,7 @@
           <center>
             <h3>Previous Searches<br></h3>
           <table class="table table-striped">
-            
+
             {% for h in history|slice:":5" %}
             <tr>
               <td>{{ h.search_key }}</td>
