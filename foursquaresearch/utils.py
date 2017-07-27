@@ -8,7 +8,7 @@ import json
 from .models import PreviousSearch
 
 
-def Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, logged_in, user):
+def get_foursquare_results(location, what_to_look, venues, error, is_searched, logged_in, user):
     API_ADRESS = "https://api.foursquare.com/v2/venues/search?client_id="
     CLIENT_ID ="V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK"
     SECRET_TOKEN = "&client_secret="

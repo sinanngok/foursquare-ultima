@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -8,7 +9,7 @@ from .models import  Favorite, Place, PreviousSearch
 
 from .forms import RegistrationForm, UserLoginForm
 
-from .utils import Get_Foursquare_Results, get_history
+from .utils import get_foursquare_results, get_history
 
 def index(request):
 
@@ -27,7 +28,7 @@ def index(request):
     if request.method == "GET":
 
         if look_for and location:
-            location, what_to_look, venues, error, is_searched = Get_Foursquare_Results(location, what_to_look, venues, error, is_searched, logged_in, user)
+            location, what_to_look, venues, error, is_searched = get_foursquare_results(location, what_to_look, venues, error, is_searched, logged_in, user)
 
         return render(request, 'foursquaresearch/imlookingfor.html', {
         'history': history,
@@ -53,24 +54,50 @@ def add_to_favorites(request):
 def remove_from_favorites(request):
 
     if request.method == "POST":
-        name = request.POST['name']
-        location = request.POST['location']
-        obj = Favorite.objects.filter(user=request.user, place=Place.objects.filter(name=name, location=location))
-        Favorite.objects.filter(user=request.user, place=Place.objects.filter(name=name, location=location)).delete()
+        place_id = request.POST['id']
+        Favorite.objects.filter(user=request.user, place=Place.objects.filter(id=place_id)).delete()
         return redirect('favorites')
 
 def favorites(request):
     logged_in = True
     user = request.user
     history = get_history(logged_in, user)
-    favs = Favorite.objects.filter(user=request.user)
+    favorites_list = Favorite.objects.filter(user=request.user)
+    paginator = Paginator(favorites_list, 3) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+    try:
+        favorites = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        favorites = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        favorites = paginator.page(paginator.num_pages)
 
     return render(request, 'foursquaresearch/favorites.html', {
     'history': history,
-    'favs': favs,
+    'favorites': favorites,
     'logged_in': logged_in,
     'username': user.username
     })
+
+def listing(request):
+    favorites_list = Favorite.objects.filter(user=request.user)
+    paginator = Paginator(favorites_list, 10) # Show 25 contacts per page
+
+    page = request.GET.get('page')
+    try:
+        favorites = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        favorites = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        favorites = paginator.page(paginator.num_pages)
+
+    return render(request, 'list.html', {'favorites': favorites})
+
 
 def registration(request):
     if request.method == "POST":
@@ -92,7 +119,6 @@ def registration(request):
 
 def login_view(request):
     form = UserLoginForm(request.POST)
-    error = False
     error_message = ""
     if request.method == "POST":
 
@@ -106,20 +132,13 @@ def login_view(request):
                     login(request, user)
                     return redirect('index')
 
-        form = UserLoginForm()
-        error = True
         error_message = "Please enter the correct username and password. Note that both fields may be case-sensitive."
-        return render(request, 'foursquaresearch/login.html', {
-        'form': form,
-        'error' : error,
-        'error_message': error_message,
-        })
 
-    else:
-        form = UserLoginForm()
-        return render(request, 'foursquaresearch/login.html', {
-        'form': form,
-        })
+    form = UserLoginForm()
+    return render(request, 'foursquaresearch/login.html', {
+    'form': form,
+    'error_message': error_message,
+    })
 
 def logout_view(request):
     logout(request)
