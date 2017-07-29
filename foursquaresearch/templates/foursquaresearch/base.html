@@ -1,4 +1,5 @@
 {% extends 'foursquaresearch/header.html' %}
+{% include "search-history.html" %}
 
         {% block body %}
         <div class="row">
@@ -18,9 +19,24 @@
         <div class="row">
         {% block search %}
         {% endblock %}
-        {% block userhistory %}
-        {% endblock %}
         {% block favorites %}
+        {% endblock %}
+        {% block prev_searches %}
+        <div class="col-sm-2">
+          <center>
+            <h3>Previous Searches<br></h3>
+          <table class="table table-striped">
+
+            {% for h in history|slice:":5" %}
+            <tr>
+              <td>{{ h.search_key }}</td>
+              <td>in</td>
+              <td>{{ h.search_location }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          </center>
+        </div>
         {% endblock %}
         </div>
         {% endblock %}

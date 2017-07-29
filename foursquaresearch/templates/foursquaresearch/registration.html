@@ -3,13 +3,27 @@
 {% block body %}
   <div class="col-sm-1">
   </div>
-  <div class="col-sm-4">
-      <form class="form-inline" action="{% url 'registration' %}" method="POST">
-      {% csrf_token %}
-      {{ form }}
-      <button type="submit" class="btn btn-primary">Register!</button>
+  <div class="col-sm-5">
 
-    </form>
+      <form class="form-inline" action="{% url 'registration' %}" method="POST">
+        {% csrf_token %}
+        <table>
+        <tr>
+          <td>Username:</td><td>{{ form.username }}</td>
+        </tr>
+        <tr>
+          <td>Required. 150 characters or fewer. </td><td> Letters, digits and @/./+/-/_ only.
+        </tr>
+        <tr>
+          <td>Email address:</td><td>{{ form.email }}</td>
+        </tr>
+        <tr>
+          <td>Password:</td><td>{{ form.password }}</td>
+        </tr>
+        </table>
+        <button type="submit" class="btn btn-primary">Register!</button>
+      </form>
+
   </div>
 
 {% endblock %}
