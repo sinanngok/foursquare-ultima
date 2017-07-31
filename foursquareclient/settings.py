@@ -23,15 +23,22 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '^^lca6u#6x2%f60#(mdjk22gf#hs9jy%qxz&r@fj()%00d_f1&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['sinanngok.pythonanywhere.com', '127.0.0.1']
+ALLOWED_HOSTS = [
+    'sinanngok.pythonanywhere.com',
+    '127.0.0.1',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    #'foursquaresearch.apps.FoursquaresearchConfig',
+    'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,10 +46,24 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'foursquaresearch',
+    'debug_toolbar',
+    'opbeat.contrib.django',
+
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
+
+OPBEAT = {
+    'ORGANIZATION_ID': 'aeba4bf8352843609ec7fc9267e441c9',
+    'APP_ID': '5d2fef032e',
+    'SECRET_TOKEN': '50c9b5f83d2e87ffb9fa013ea689dd568d451677',
+}
+
+
 MIDDLEWARE = [
+    'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

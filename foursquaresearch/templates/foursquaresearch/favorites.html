@@ -4,52 +4,54 @@
 <div class="col-sm-1">
 </div>
 <div class="col-sm-3">
-  <h3>Favorite Places<br></h3>
-  <div>
-    <table class="table table-bordered">
-      <tr>
-        <th>Place</th>
-        <th>Address</th>
-      </tr>
-      <tr>
-        {% for favorite in favorites %}
-        <td>{{ favorite.place.name }}</td>
-        <td>{{ favorite.place.location }}</td>
-        <td>
-          <form action={% url 'remove_from_favorites' %} method="post">
-            {% csrf_token %}
-            <input type="hidden" name="id" value="{{ favorite.place.id }}"/>
-            <button type="submit" class="btn-link">DEL</button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-  </div>
-  <div class="pagination">
-    <span class="step-links">
-      <table>
+  <center>
+    <h3>Favorite Places<br></h3>
+    <div>
+      <table class="table table-bordered">
         <tr>
-          {% if favorites.has_previous %}
-          <td><a href="?page={{ favorites.previous_page_number }}">previous</a></td>
-          {% endif %}
-          {% for page in num_pages %}
-          <td>
-            {% if page == favorites.number %}
-            <span class="current">{{page}}</span>
-            {% else %}
-            <span class="other-page"><a href="?page={{ page }}">{{ page }}</a></span>
-            {% endif %}
-          </td>
-          {% endfor %}
-
-          {% if favorites.has_next %}
-          <td><a href="?page={{ favorites.next_page_number }}">next</a></td>
-          {% endif %}
+          <th>Place</th>
+          <th>Address</th>
         </tr>
+        <tr>
+          {% for favorite in favorites %}
+          <td>{{ favorite.place.name }}</td>
+          <td>{{ favorite.place.location }}</td>
+          <td>
+            <form action={% url 'remove_from_favorites' %} method="post">
+              {% csrf_token %}
+              <input type="hidden" name="id" value="{{ favorite.place.id }}"/>
+              <button type="submit" class="btn-link">DEL</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
       </table>
-    </span>
-  </div>
+    </div>
+    <div class="pagination">
+      <span class="step-links">
+        <table>
+          <tr>
+            {% if favorites.has_previous %}
+            <td><a href="?page={{ favorites.previous_page_number }}">previous</a></td>
+            {% endif %}
+            {% for page in num_pages %}
+            <td>
+              {% if page == favorites.number %}
+              <span class="current">{{page}}</span>
+              {% else %}
+              <span class="other-page"><a href="?page={{ page }}">{{ page }}</a></span>
+              {% endif %}
+            </td>
+            {% endfor %}
+
+            {% if favorites.has_next %}
+            <td><a href="?page={{ favorites.next_page_number }}">next</a></td>
+            {% endif %}
+          </tr>
+        </table>
+      </span>
+    </div>
+  </center>
 </div>
 <div class="col-sm-1">
 </div>

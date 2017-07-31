@@ -1,20 +1,49 @@
 {% extends 'foursquaresearch/base.html' %}
 
 {% block search %}
-  {% if is_searched %}
-    <div class="col-sm-1">
-    </div>
-    <div class="col-sm-3">
-      <h3> Results for {{ what_to_look }} in {{ location }}
-        <br><br></h3>
-      <table class="table table-bordered">
-        <tr>
-          <th>Name</th>
-          <th>Checkins</th>
-        </tr>
-        <tr>
+{% if is_searched %}
+<div class="col-sm-1">
+</div>
+<div class="col-sm-4">
+  <h3> Results for {{ what_to_look }} in {{ location }}
+    <br><br></h3>
+    <table class="table table-bordered">
+      <tr>
+        <th>Name</th>
+        <th>Checkins</th>
+      </tr>
+      <tr>
         {% for venue in venues %}
-        <td>{{ venue.name }}</td>
+        <!-- Button trigger modal -->
+        <td>
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+            {{ venue.name }}
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                      <tr>
+                        <td>Checkins Count: </td>
+                        <td>{{ venue.stats.checkinsCount }}</td>
+                      </tr>
+                      <tr>
+                        <td>Currently: </td>
+                        <td>{{ venue.hereNow.summary }}</td>
+                      </tr>
+                    </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
         <td>{{ venue.stats.checkinsCount }}</td>
         <td>{{ venue.location.address }}</td>
         {% if logged_in %}
@@ -27,19 +56,19 @@
           </form>
         </td>
         {% endif %}
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-    <div class="col-sm-1">
-    </div>
-    {% elif not is_searched %}
-    <div class="col-sm-1">
-    </div>
-    <div class="col-sm-4">
-      <br>
-      {{error}}<br>
-    </div>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="col-sm-1">
+  </div>
+  {% elif not is_searched %}
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-4">
+    <br>
+    {{error}}<br>
+  </div>
   {% endif %}
 
-{% endblock %}
+  {% endblock %}

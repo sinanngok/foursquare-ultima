@@ -3,7 +3,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.http import HttpResponse
+from django.contrib import messages
 import requests
+from django.http import JsonResponse
 
 from .models import  Favorite, Place, PreviousSearch
 
@@ -48,6 +51,7 @@ def add_to_favorites(request):
         location = request.POST['location']
         obj, created = Place.objects.get_or_create(name=name, location=location)
         Favorite.objects.create(user=request.user, place=obj)
+        messages.success(request, 'Location added to your favorites')
         return redirect('index')
 
 def remove_from_favorites(request):
@@ -61,7 +65,7 @@ def favorites(request):
     logged_in = True
     user = request.user
     history = get_history(logged_in, user)
-    favorites_list = Favorite.objects.filter(user=request.user)
+    favorites_list = request.user.favorites.all()
     paginator = Paginator(favorites_list, 3) # Show 10 contacts per page
 
     page = request.GET.get('page')
@@ -94,13 +98,24 @@ def registration(request):
             password = form.cleaned_data['password']
             user.set_password(password)
             user.save()
-            return redirect('login_view')
+            login(request, user)
+            return HttpResponse('')
+            #return redirect('index')
 
     else:
         form = RegistrationForm()
         return render(request, 'foursquaresearch/registration.html', {
         'form': form,
         })
+
+def validate_username(request):
+    username = request.GET.get('username', None)
+    data = {
+        'is_taken': User.objects.filter(username__iexact=username).exists()
+    }
+    if data['is_taken']:
+        data['error_message'] = 'A user with this username already exists.'
+    return JsonResponse(data)
 
 def login_view(request):
     form = UserLoginForm(request.POST)

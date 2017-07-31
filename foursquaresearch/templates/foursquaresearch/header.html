@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Foursquare Ultima</title>
-        {% load staticfiles %}
-        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type = "text/css"/>
-	       <meta name="viewport" content = "width=device-width, initial-scale=1.0">
-         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    </head>
-    <body >
-      <div class="row">
-        <div class="col-sm-8">
-          <center>
-            <h1><a href=/>The Ultimate Foursquare Client</a></h1>
-          </center>
-        </div>
-        <div>
-          {% if logged_in %}
-          <div class="col-sm-1">
+<head>
+  <title>Foursquare Ultima</title>
+  {% load staticfiles %}
+</head>
+<body >
+  <header>
+    <div class="row">
+      <div class="col-sm-8">
+        <center>
+          <h1><a href="/">The Ultimate Foursquare Client</a></h1>
+        </center>
+      </div>
+      <div>
+        {% if logged_in %}
+        <div class="col-sm-1">
           <div class="dropdown">
             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
               Hi, {{ username }} :)
@@ -29,22 +26,41 @@
               <li><a href="{% url 'logout_view' %}">Logout</a></li>
             </ul>
           </div>
-          </div>
+        </div>
 
-          {% elif not logged_in %}
-          <div class="col-sm-1">
-            <h5><a href={% url 'registration' %}>Register</a></h5>
-          </div>
-          <div class="col-sm-1">
-            <h5><a href="{% url 'login_view' %}">Login</a></h5>
-          </div>
-          {% endif %}
+        {% elif not logged_in %}
+        <div class="col-sm-1">
+          <h5><a href={% url 'registration' %}>Register</a></h5>
+        </div>
+        <div class="col-sm-1">
+          <h5><a href="{% url 'login_view' %}">Login</a></h5>
+        </div>
+        {% endif %}
       </div>
-      </div>
-      <br><br>
-      {% block body %}
-      {% endblock %}
-      {% block error %}
-      {% endblock %}
-    </body>
+    </div>
+  </header>
+  <main>
+    <br><br>
+    {% block body %}
+    {% endblock %}
+    {% block error %}
+    {% endblock %}
+    <div class="col-sm-1">
+    </div>
+    {% block content %}
+    {% endblock %}
+  </main>
+</footer>
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type = "text/css"/>
+<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+jQuery(document).ready(function($) {
+  $(".clickable-row").click(function() {
+    window.location = $(this).data("action");
+  });
+});
+</script>
+</body>
 </html>
