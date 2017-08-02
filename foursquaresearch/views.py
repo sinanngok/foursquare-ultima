@@ -16,11 +16,10 @@ from .utils import get_foursquare_results, get_history
 
 def index(request):
 
-    look_for = request.GET.get("look_for")
+    what_to_look = request.GET.get("look_for")
     location = request.GET.get("location")
-    what_to_look = look_for
     is_searched = False
-    error = ''
+    error_message = ''
     venues = []
     logged_in = False
     user = request.user
@@ -30,15 +29,15 @@ def index(request):
     print (user)
     if request.method == "GET":
 
-        if look_for and location:
-            location, what_to_look, venues, error, is_searched = get_foursquare_results(location, what_to_look, venues, error, is_searched, logged_in, user)
+        if what_to_look and location:
+            location, what_to_look, venues, error_message, is_searched = get_foursquare_results(location, what_to_look, venues, error_message, is_searched, logged_in, user)
 
         return render(request, 'foursquaresearch/imlookingfor.html', {
         'history': history,
         'location': location,
         'what_to_look': what_to_look,
         'venues': venues,
-        'error': error,
+        'error_message': error_message,
         'is_searched': is_searched,
         'logged_in': logged_in,
         'username': user.username
@@ -50,9 +49,18 @@ def add_to_favorites(request):
         name = request.POST['name']
         location = request.POST['location']
         obj, created = Place.objects.get_or_create(name=name, location=location)
-        Favorite.objects.create(user=request.user, place=obj)
-        messages.success(request, 'Location added to your favorites')
-        return redirect('index')
+        print (name)
+        print (location)
+        print ("Is created: ",created)
+        print (obj)
+        print (Favorite.objects.filter(user=request.user, place=obj))
+        data = {
+            'favorite_exist': Favorite.objects.filter(user=request.user, place=obj).exists()
+        }
+        if not data['favorite_exist']:
+            Favorite.objects.create(user=request.user, place=obj)
+            messages.success(request, 'Location added to your favorites')
+        return JsonResponse(data)
 
 def remove_from_favorites(request):
 
@@ -66,7 +74,7 @@ def favorites(request):
     user = request.user
     history = get_history(logged_in, user)
     favorites_list = request.user.favorites.all()
-    paginator = Paginator(favorites_list, 3) # Show 10 contacts per page
+    paginator = Paginator(favorites_list, 10) # Show 10 contacts per page
 
     page = request.GET.get('page')
     try:
@@ -99,8 +107,7 @@ def registration(request):
             user.set_password(password)
             user.save()
             login(request, user)
-            return HttpResponse('')
-            #return redirect('index')
+            return redirect('index')
 
     else:
         form = RegistrationForm()
