@@ -27,6 +27,7 @@ def index(request):
         logged_in = True
     history = get_history(logged_in, user)
     print (user)
+    print (history)
     if request.method == "GET":
 
         if what_to_look and location:
@@ -49,17 +50,11 @@ def add_to_favorites(request):
         name = request.POST['name']
         location = request.POST['location']
         obj, created = Place.objects.get_or_create(name=name, location=location)
-        print (name)
-        print (location)
-        print ("Is created: ",created)
-        print (obj)
-        print (Favorite.objects.filter(user=request.user, place=obj))
         data = {
             'favorite_exist': Favorite.objects.filter(user=request.user, place=obj).exists()
         }
         if not data['favorite_exist']:
             Favorite.objects.create(user=request.user, place=obj)
-            messages.success(request, 'Location added to your favorites')
         return JsonResponse(data)
 
 def remove_from_favorites(request):

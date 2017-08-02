@@ -28,6 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'sinanngok.pythonanywhere.com',
     '127.0.0.1',
+    'opbeat.contrib.django',
 ]
 
 INTERNAL_IPS = [
@@ -38,6 +39,8 @@ INTERNAL_IPS = [
 # Application definition
 
 INSTALLED_APPS = [
+
+    'foursquaresearch',
     'suit',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -45,10 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'foursquaresearch',
     'debug_toolbar',
     'opbeat.contrib.django',
-
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
@@ -58,7 +59,6 @@ OPBEAT = {
     'APP_ID': '5d2fef032e',
     'SECRET_TOKEN': '50c9b5f83d2e87ffb9fa013ea689dd568d451677',
 }
-
 
 MIDDLEWARE = [
     'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',

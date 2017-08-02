@@ -11,10 +11,10 @@ $('.addToFavorite').submit(function(e) {
     type: "POST",
     data: postData,
     success: function(data, textStatus, jqXHR) {
-      if (!data.favorite_exist) {
-          alert("Place added to favorites");
-      } else {
+      if (data.favorite_exist) {
           alert("Place is already in favorites");
+      } else {
+          alert("Place added to favorites");
       }
     },
     error: function(jqXHR, textStatus, errorThrown) {
