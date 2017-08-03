@@ -20,6 +20,7 @@
             <form action={% url 'remove_from_favorites' %} method="post">
               {% csrf_token %}
               <input type="hidden" name="id" value="{{ favorite.place.id }}"/>
+              <input type="hidden" name="page" value="{{ current_page }}"/>
               <button type="submit" class="btn-link">DEL</button>
             </form>
           </td>

@@ -1,0 +1,11 @@
+certifi==2017.4.17
+chardet==3.0.4
+Django==1.11.2
+django-debug-toolbar==1.8
+django-suit==0.2.25
+idna==2.5
+opbeat==3.5.2
+pytz==2017.2
+requests==2.18.1
+sqlparse==0.2.3
+urllib3==1.21.1

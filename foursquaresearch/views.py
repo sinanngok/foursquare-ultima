@@ -26,8 +26,6 @@ def index(request):
     if request.user.is_authenticated():
         logged_in = True
     history = get_history(logged_in, user)
-    print (user)
-    print (history)
     if request.method == "GET":
 
         if what_to_look and location:
@@ -58,11 +56,14 @@ def add_to_favorites(request):
         return JsonResponse(data)
 
 def remove_from_favorites(request):
-
     if request.method == "POST":
         place_id = request.POST['id']
-        Favorite.objects.filter(user=request.user, place=Place.objects.get(id=place_id)).delete()
-        return redirect('favorites')
+        current_page = request.POST['page']
+        url = f'/favorites/?page={current_page}'
+        print (current_page)
+        print (url)
+        Favorite.objects.filter(user=request.user, place__id=place_id).delete()
+        return redirect(url)
 
 def favorites(request):
     logged_in = True
@@ -82,10 +83,12 @@ def favorites(request):
         favorites = paginator.page(paginator.num_pages)
 
     num_pages = range(1, favorites.paginator.num_pages+1)
+    current_page = favorites.number
 
     return render(request, 'foursquaresearch/favorites.html', {
     'history': history,
     'num_pages': num_pages,
+    'current_page': current_page,
     'favorites': favorites,
     'logged_in': logged_in,
     'username': user.username
