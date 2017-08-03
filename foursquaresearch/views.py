@@ -62,7 +62,7 @@ def remove_from_favorites(request):
         url = f'/favorites/?page={current_page}'
         print (current_page)
         print (url)
-        Favorite.objects.filter(user=request.user, place__id=place_id).delete()
+        request.user.favorites.filter(place__id=place_id).delete()
         return redirect(url)
 
 def favorites(request):
