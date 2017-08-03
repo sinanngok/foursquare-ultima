@@ -2,6 +2,8 @@ language: python
 python:
   - "3.6"
 # command to install dependencies
+env:
+  - DJANGO=1.11.2
 install: "pip install -r requirements.txt"
 # command to run tests
 deploy:
@@ -10,3 +12,6 @@ deploy:
   github_token: $GITHUB_TOKEN # Set in travis-ci.org dashboard
   on:
     branch: production
+
+script:
+  - python manage.py test
