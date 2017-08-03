@@ -69,7 +69,7 @@ def favorites(request):
     logged_in = True
     user = request.user
     history = get_history(logged_in, user)
-    favorites_list = request.user.favorites.all()
+    favorites_list = request.user.favorites.all().order_by('id')
     paginator = Paginator(favorites_list, 10) # Show 10 contacts per page
 
     page = request.GET.get('page')
