@@ -1,29 +1,53 @@
 {% extends 'foursquaresearch/header.html' %}
 
 {% block body %}
-  <div class="col-sm-1">
-  </div>
-  <div class="col-sm-5">
+<div class="col-sm-1">
+</div>
+<div class="col-sm-5">
+  <form class="form-inline" method="POST" id="new_user_form">
+    {% csrf_token %}
+    <table>
+      <tr>
+        <td>Username:</td><td>{{ form.username }}</td>
+      </tr>
+      <tr>
+        <td>Required. 150 characters or fewer.</td><td>Letters, digits and @/./+/-/_ only.</td>
+      </tr>
+      <tr>
+        <td>Email address:</td><td>{{ form.email }}</td>
+      </tr>
+      <tr>
+        <td>Password:</td><td>{{ form.password }}</td>
+      </tr>
+    </table>
+    <button type="submit" class="btn btn-primary">Register!</button>
+  </form>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
 
-      <form class="form-inline" action="{% url 'registration' %}" method="POST">
-        {% csrf_token %}
-        <table>
-        <tr>
-          <td>Username:</td><td>{{ form.username }}</td>
-        </tr>
-        <tr>
-          <td>Required. 150 characters or fewer. </td><td> Letters, digits and @/./+/-/_ only.
-        </tr>
-        <tr>
-          <td>Email address:</td><td>{{ form.email }}</td>
-        </tr>
-        <tr>
-          <td>Password:</td><td>{{ form.password }}</td>
-        </tr>
-        </table>
-        <button type="submit" class="btn btn-primary">Register!</button>
-      </form>
+    $(document).on('submit', '#new_user_form', dunction(e){
+        e.preventDefault();
 
-  </div>
+        $ajax({
+          type:'POST'
+          url:'/signup/',
+          data:{
+            username:$('#username').val(),
+            email:#('#email').val(),
+            password:$('#password').val(),
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()
+          }
+          success:function(){
+            alert('Created New User ')
+          }
 
+        });
+
+
+    });
+
+
+  </script>
+</div>
 {% endblock %}

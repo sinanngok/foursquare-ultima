@@ -1,45 +1,102 @@
 {% extends 'foursquaresearch/base.html' %}
 
+{% block javascript %}
+<script>
+$('.addToFavorite').submit(function(e) {
+  var postData = $(this).serializeArray();
+  var formURL = $(this).attr("action");
+  /* start ajax submission process */
+  $.ajax({
+    url: formURL,
+    type: "POST",
+    data: postData,
+    success: function(data, textStatus, jqXHR) {
+      if (data.favorite_exist) {
+          alert("Place is already in favorites");
+      } else {
+          alert("Place added to favorites");
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      alert('Error occurred!');
+    }
+
+  });
+  e.preventDefault(); //STOP default action
+  /* ends ajax submission process */
+});
+</script>
+{% endblock %}
+
 {% block search %}
-  {% if is_searched %}
-    <div class="col-sm-1">
-    </div>
-    <div class="col-sm-3">
-      <h3> Results for {{ what_to_look }} in {{ location }}
-        <br><br></h3>
-      <table class="table table-bordered">
-        <tr>
-          <th>Name</th>
-          <th>Checkins</th>
-        </tr>
-        <tr>
+{% if is_searched %}
+<div class="col-sm-1">
+</div>
+<div class="col-sm-4">
+  <h3> Results for {{ what_to_look }} in {{ location }}
+    <br><br></h3>
+    <table class="table table-bordered">
+      <tr>
+        <th>Name</th>
+        <th>Checkins</th>
+      </tr>
+      <tr>
         {% for venue in venues %}
-        <td>{{ venue.name }}</td>
+        <!-- Button trigger modal -->
+        <td>
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal-{{venue.id}}">
+            {{ venue.name }}
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="myModal-{{venue.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Details</h4>
+                </div>
+                <div class="modal-body">
+                  <table class="table table-bordered">
+                    <tr>
+                      <td>Checkins Count: </td>
+                      <td>{{ venue.stats.checkinsCount }}</td>
+                    </tr>
+                    <tr>
+                      <td>Currently: </td>
+                      <td>{{ venue.hereNow.summary }}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
         <td>{{ venue.stats.checkinsCount }}</td>
         <td>{{ venue.location.address }}</td>
         {% if logged_in %}
         <td>
-          <form action={% url 'add_to_favorites' %} method="post">
-            {% csrf_token %}
-            <input type="hidden" name="name" value="{{ venue.name }}"/>
-            <input type="hidden" name="location" value="{{ venue.location.address }}"/>
-            <button type="submit" class="btn-link">FAV</button>
-          </form>
-        </td>
-        {% endif %}
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-    <div class="col-sm-1">
-    </div>
-    {% elif not is_searched %}
-    <div class="col-sm-1">
-    </div>
-    <div class="col-sm-4">
-      <br>
-      {{error}}<br>
-    </div>
+        <form action={% url 'add_to_favorites' %} method="post" class="addToFavorite">
+          {% csrf_token %}
+          <input type="hidden" name="name" value="{{ venue.name }}"/>
+          <input type="hidden" name="location" value="{{ venue.location.address }}"/>
+          <button type="submit" class="btn-link" onclick="addFavoriteFunction(this)">FAV</button>
+        </form>
+      </td>
+      {% endif %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="col-sm-1">
+  </div>
+  {% elif not is_searched %}
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-4">
+    <br>
+    {{error}}<br>
+  </div>
   {% endif %}
 
-{% endblock %}
+  {% endblock %}
