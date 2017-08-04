@@ -55,10 +55,13 @@ def add_to_favorites(request):
             foursquare_id=foursquare_id,
             defaults={'name':name, 'location':location},
             )
-        favorite_exist = request.user.favorite.objects.filter(place=obj).exists()
-        if not favorite_exist:
-            Favorite.user.objects.create(place=obj)
-        return redirect('index')
+        data = {
+            'favorite_exist': Favorite.objects.filter(user=request.user, place=obj).exists()
+        }
+        print(data['favorite_exist'])
+        if not data['favorite_exist']:
+            Favorite.objects.create(user=request.user, place=obj)
+        return JsonResponse(data)
 
 def remove_from_favorites(request):
     if request.method == "POST":
