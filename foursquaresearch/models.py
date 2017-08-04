@@ -23,6 +23,8 @@ class Favorite(models.Model):
     user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True,)
     place = models.ForeignKey('Place', on_delete=models.CASCADE,)
 
+    class Meta:
+        unique_together = ("user", "place")
 
     def __str__(self):
         return self.place.name
