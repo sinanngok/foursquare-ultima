@@ -12,7 +12,7 @@ class PreviousSearch(models.Model):
         return self.search_key
 
 class Place(models.Model):
-    foursquare_id = models.CharField(max_length=200, unique=True)
+    foursquare_id = models.CharField(max_length=200, null=True, unique=True)
     name = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
 
