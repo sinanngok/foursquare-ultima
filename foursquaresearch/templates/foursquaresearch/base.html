@@ -1,42 +1,82 @@
 {% extends 'foursquaresearch/header.html' %}
 {% include "search-history.html" %}
 
-        {% block body %}
-        <div class="row">
-          <div class="col-sm-1">
-          </div>
-          <div class="col-sm-5">
-            <center>
-            <br><br>
-            <form class="form-inline" action="{% url 'index' %}" method="get">
-              <input type="text" name="look_for" placeholder= "I am looking for...">
-              <input type="text" name="location" placeholder= "Location">
-              <button type="submit" class="btn btn-primary">OK</button>
-            </form>
-            </center>
-          </div>
-        </div>
-        <div class="row">
-        {% block search %}
-        {% endblock %}
-        {% block favorites %}
-        {% endblock %}
-        {% block prev_searches %}
-        <div class="col-sm-2">
-          <center>
-            <h3>Previous Searches<br></h3>
-          <table class="table table-striped">
+{% block body %}
+<div class="row">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-5">
+    <center>
+      <br><br>
+      <form class="form-inline" action="{% url 'index' %}" method="get">
+        <input type="text" name="look_for" placeholder= "I am looking for...">
+        <input type="text" name="location" placeholder= "Location">
+        <button type="submit" class="btn btn-primary">OK</button>
+      </form>
+    </center>
+  </div>
+</div>
+<div class="row">
+  {% block search %}
+  {% endblock %}
+  {% block favorites %}
+  {% endblock %}
+  {% block prev_searches %}
+  <div class="col-sm-2">
+    <center>
+      <h3>Previous Searches<br></h3>
+      <table class="table table-striped">
+        {% for h in history|slice:":5" %}
+        <tr class="clickable-row">
+          <form action="{% url 'index' %}" method="get" >
+            <input type="hidden" name="look_for" value="{{ h.search_key }}"/>
+            <input type="hidden" name="location" value="{{ h.search_location }}"/>
+            <td><button type="submit" class="btn-link">{{ h.search_key }}</button></td>
+            <td><button type="submit" class="btn-link">in</button></td>
+            <td><button type="submit" class="btn-link">{{ h.search_location }}</button>
+            </form></td>
+          </tr>
+          {% empty %}
+          <tr>Your search history is empty :(</tr>
+          {% endfor %}
+        </table>
+    </center>
+  </div>
+  {% endblock %}
+</div>
+<script>
 
-            {% for h in history|slice:":5" %}
-            <tr>
-              <td>{{ h.search_key }}</td>
-              <td>in</td>
-              <td>{{ h.search_location }}</td>
-            </tr>
-            {% endfor %}
-          </table>
-          </center>
-        </div>
-        {% endblock %}
-        </div>
-        {% endblock %}
+    $(".clickable-row").click(function() {
+      var getData = $(this).serializeArray();
+      var formURL = $(this).attr("action");
+      url: formURL,
+      type: "GET",
+      data: getData,
+        window.location = $(this).data(url);
+    });
+
+$('.clickable-row').submit(function(e) {
+  var postData = $(this).serializeArray();
+  var formURL = $(this).attr("action");
+  /* start ajax submission process */
+  $.ajax({
+    url: formURL,
+    type: "POST",
+    data: postData,
+    success: function(data, textStatus, jqXHR) {
+      if (!data.favorite_exist) {
+          alert("Place added to favorites");
+      } else {
+          alert("Place is already in favorites");
+      }
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      alert('Error occurred!');
+    }
+
+  });
+  e.preventDefault(); //STOP default action
+  /* ends ajax submission process */
+});
+</script>
+{% endblock %}

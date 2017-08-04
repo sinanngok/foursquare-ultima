@@ -8,7 +8,7 @@ import json
 from .models import PreviousSearch
 
 
-def get_foursquare_results(location, what_to_look, venues, error, is_searched, logged_in, user):
+def get_foursquare_results(location, what_to_look, venues, error_message, is_searched, logged_in, user):
     API_ADRESS = "https://api.foursquare.com/v2/venues/search?client_id="
     CLIENT_ID ="V131V0IPODZOAI4DH0TXB0W1VF4R1QCAHASGHJI35D3KJLWK"
     SECRET_TOKEN = "&client_secret="
@@ -35,14 +35,14 @@ def get_foursquare_results(location, what_to_look, venues, error, is_searched, l
                 PreviousSearch.objects.create(user=user, search_key=what_to_look, search_location=location)
             else:
                 PreviousSearch.objects.create(search_key=what_to_look, search_location=location)
-            error = ""
+            error_message = ""
             is_searched = True
         else:
-            error = "There is nothing to show."
+            error_message = "There is nothing to show."
     else:
-        error = "Location not found, please try somewhere else."
+        error_message = "Location not found, please try somewhere else."
 
-    return (location, what_to_look, venues, error, is_searched)
+    return (location, what_to_look, venues, error_message, is_searched)
 
 def get_history(logged_in, user):
     if logged_in:
