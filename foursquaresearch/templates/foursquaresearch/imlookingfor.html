@@ -21,6 +21,7 @@
         <td>
           <form action={% url 'add_to_favorites' %} method="post">
             {% csrf_token %}
+            <input type="hidden" name="id" value="{{ venue.id }}"/>
             <input type="hidden" name="name" value="{{ venue.name }}"/>
             <input type="hidden" name="location" value="{{ venue.location.address }}"/>
             <button type="submit" class="btn-link">FAV</button>

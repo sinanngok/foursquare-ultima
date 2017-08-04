@@ -12,6 +12,7 @@ class PreviousSearch(models.Model):
         return self.search_key
 
 class Place(models.Model):
+    foursquare_id = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
     location = models.CharField(max_length=200)
 
@@ -21,5 +22,7 @@ class Place(models.Model):
 class Favorite(models.Model):
     user = models.ForeignKey(User, models.SET_NULL, blank=True, null=True,)
     place = models.ForeignKey('Place', on_delete=models.CASCADE,)
+
+
     def __str__(self):
         return self.place.name
