@@ -45,13 +45,19 @@ def index(request):
 def add_to_favorites(request):
 
     if request.method == "POST":
-        id = request.POST['id']
+        foursquare_id = request.POST['id']
         name = request.POST['name']
         location = request.POST['location']
+        print(foursquare_id)
+        print(name)
+        print(location)
         obj, created = Place.objects.get_or_create(
             foursquare_id=foursquare_id,
-            defaults={name:name, location:location},)
-        Favorite.objects.create(user=request.user, place=obj)
+            defaults={'name':name, 'location':location},
+            )
+        favorite_exist = request.user.favorite.objects.filter(place=obj).exists()
+        if not favorite_exist:
+            Favorite.user.objects.create(place=obj)
         return redirect('index')
 
 def remove_from_favorites(request):
