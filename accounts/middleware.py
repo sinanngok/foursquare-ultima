@@ -16,8 +16,5 @@ class SetLastVisitMiddleware(object):
         if request.user.is_authenticated():
             # Update last visit time after request finished processing.
             user = User.objects.get(pk=request.user.pk)
-            print("1")
             user.last_visit = timezone.now()
-            print("2")
-
         return response
