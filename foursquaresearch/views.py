@@ -1,7 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.utils import timezone
 from django.http import HttpResponse
 from django.contrib import messages
@@ -9,10 +8,11 @@ import requests
 from django.http import JsonResponse
 
 from .models import  Favorite, Place, PreviousSearch
+from accounts.models import  MyUser as User
 
 from .forms import RegistrationForm, UserLoginForm
 
-from .utils import get_foursquare_results, get_history
+from .utils import get_foursquare_results, get_history, get_all_logged_in_users
 
 def index(request):
 
@@ -22,7 +22,20 @@ def index(request):
     error_message = ''
     venues = []
     logged_in = False
+
+
+    user_list = User.objects.all()
+    print(user_list)
+
     user = request.user
+    print(user)
+
+
+    user_list = get_all_logged_in_users()
+    print (user)
+    print (user_list)
+    for u in user_list:
+        print(u.username)
     if request.user.is_authenticated():
         logged_in = True
     history = get_history(logged_in, user)
@@ -48,9 +61,6 @@ def add_to_favorites(request):
         foursquare_id = request.POST['id']
         name = request.POST['name']
         location = request.POST['location']
-        print(foursquare_id)
-        print(name)
-        print(location)
         obj, created = Place.objects.get_or_create(
             foursquare_id=foursquare_id,
             defaults={'name':name, 'location':location},
@@ -58,7 +68,6 @@ def add_to_favorites(request):
         data = {
             'favorite_exist': Favorite.objects.filter(user=request.user, place=obj).exists()
         }
-        print(data['favorite_exist'])
         if not data['favorite_exist']:
             Favorite.objects.create(user=request.user, place=obj)
         return JsonResponse(data)
@@ -68,8 +77,6 @@ def remove_from_favorites(request):
         place_id = request.POST['id']
         current_page = request.POST['page']
         url = f'/favorites/?page={current_page}'
-        print (current_page)
-        print (url)
         request.user.favorites.filter(place__id=place_id).delete()
         return redirect(url)
 
@@ -114,6 +121,12 @@ def registration(request):
             user.save()
             login(request, user)
             return redirect('index')
+        else:
+            print (form.errors)
+            form = RegistrationForm()
+            return render(request, 'foursquaresearch/registration.html', {
+            'form': form,
+            })
 
     else:
         form = RegistrationForm()

@@ -4,14 +4,25 @@
 <div class="col-sm-1">
 </div>
 <div class="col-sm-5">
+  {% if form.errors %}
+      {% for field in form %}
+          {% for error in field.errors %}
+              <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+              </div>
+          {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+          <div class="alert alert-danger">
+              <strong>{{ error|escape }}</strong>
+          </div>
+      {% endfor %}
+  {% endif %}
   <form class="form-inline" method="POST" id="new_user_form">
     {% csrf_token %}
     <table>
       <tr>
         <td>Username:</td><td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>Required. 150 characters or fewer.</td><td>Letters, digits and @/./+/-/_ only.</td>
       </tr>
       <tr>
         <td>Email address:</td><td>{{ form.email }}</td>
@@ -33,7 +44,7 @@
           type:'POST'
           url:'/signup/',
           data:{
-            username:$('#username').val(),
+            username:#('#username').val(),
             email:#('#email').val(),
             password:$('#password').val(),
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val()

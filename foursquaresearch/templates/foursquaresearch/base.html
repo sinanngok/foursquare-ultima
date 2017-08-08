@@ -26,7 +26,7 @@
     <center>
       <h3>Previous Searches<br></h3>
       <table class="table table-striped">
-        {% for h in history|slice:":5" %}
+        {% for h in history %}
         <tr class="clickable-row">
           <form action="{% url 'index' %}" method="get" >
             <input type="hidden" name="look_for" value="{{ h.search_key }}"/>
