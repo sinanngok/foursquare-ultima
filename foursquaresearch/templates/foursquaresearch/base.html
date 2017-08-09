@@ -23,28 +23,42 @@
   {% endblock %}
   {% block prev_searches %}
   <div class="col-sm-2">
-    <center>
-      <h3>Previous Searches<br></h3>
-      <table class="table table-striped">
-        {% for h in history %}
-        <tr class="clickable-row">
-          <form action="{% url 'index' %}" method="get" >
-            <input type="hidden" name="look_for" value="{{ h.search_key }}"/>
-            <input type="hidden" name="location" value="{{ h.search_location }}"/>
-            <td><button type="submit" class="btn-link">{{ h.search_key }}</button></td>
-            <td><button type="submit" class="btn-link">in</button></td>
-            <td><button type="submit" class="btn-link">{{ h.search_location }}</button>
-            </form></td>
-          </tr>
-          {% empty %}
-          <tr>Your search history is empty :(</tr>
-          {% endfor %}
-        </table>
-    </center>
-  </div>
-  {% endblock %}
-</div>
-<script>
+    <div>
+      <center>
+        <h3>Previous Searches<br></h3>
+        <table class="table table-striped">
+          {% for h in history %}
+          <tr class="clickable-row">
+            <form action="{% url 'index' %}" method="get" >
+              <input type="hidden" name="look_for" value="{{ h.search_key }}"/>
+              <input type="hidden" name="location" value="{{ h.search_location }}"/>
+              <td><button type="submit" class="btn-link">{{ h.search_key }}</button></td>
+              <td><button type="submit" class="btn-link">in</button></td>
+              <td><button type="submit" class="btn-link">{{ h.search_location }}</button>
+              </form></td>
+            </tr>
+            {% empty %}
+            <tr>Your search history is empty :(</tr>
+            {% endfor %}
+          </table>
+        </center>
+      </div>
+      <div>
+        <center>
+          <h3>Active users</h3><h5>(last 15 minutes)<br></h5>
+          <table class="table table-striped">
+            {% for user in last_active_users %}
+              <tr><td>{{user}}</td></tr>
+              {% empty %}
+              It feels scary, to have no active user :(
+              {% endfor %}
+            </table>
+          </center>
+        </div>
+      </div>
+      {% endblock %}
+    </div>
+    <script>
 
     $(".clickable-row").click(function() {
       var getData = $(this).serializeArray();
@@ -52,31 +66,31 @@
       url: formURL,
       type: "GET",
       data: getData,
-        window.location = $(this).data(url);
+      window.location = $(this).data(url);
     });
 
-$('.clickable-row').submit(function(e) {
-  var postData = $(this).serializeArray();
-  var formURL = $(this).attr("action");
-  /* start ajax submission process */
-  $.ajax({
-    url: formURL,
-    type: "POST",
-    data: postData,
-    success: function(data, textStatus, jqXHR) {
-      if (!data.favorite_exist) {
-          alert("Place added to favorites");
-      } else {
-          alert("Place is already in favorites");
-      }
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      alert('Error occurred!');
-    }
+    $('.clickable-row').submit(function(e) {
+      var postData = $(this).serializeArray();
+      var formURL = $(this).attr("action");
+      /* start ajax submission process */
+      $.ajax({
+        url: formURL,
+        type: "POST",
+        data: postData,
+        success: function(data, textStatus, jqXHR) {
+          if (!data.favorite_exist) {
+            alert("Place added to favorites");
+          } else {
+            alert("Place is already in favorites");
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          alert('Error occurred!');
+        }
 
-  });
-  e.preventDefault(); //STOP default action
-  /* ends ajax submission process */
-});
-</script>
-{% endblock %}
+      });
+      e.preventDefault(); //STOP default action
+      /* ends ajax submission process */
+    });
+    </script>
+    {% endblock %}

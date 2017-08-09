@@ -65,3 +65,11 @@ def get_all_logged_in_users():
 
     # Query all logged in users based on id list
     return User.objects.filter(id__in=uid_list)
+
+def last_active_users():
+    active_users = []
+    users = User.objects.order_by('-last_visit')
+    for user in users:
+        if user.was_active_recently():
+            active_users += {user.username}
+    return active_users

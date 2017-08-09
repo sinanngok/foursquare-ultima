@@ -32,8 +32,8 @@ $('.addToFavorite').submit(function(e) {
 {% if is_searched %}
 <div class="col-sm-1">
 </div>
-<div class="col-sm-4">
-  <h3> Results for {{ what_to_look }} in {{ location }}
+<div class="col-sm-5">
+  <h3> Results for {{ what_to_look }} in {{ location|capfirst }}
     <br><br></h3>
     <table class="table table-bordered">
       <tr>
@@ -94,7 +94,7 @@ $('.addToFavorite').submit(function(e) {
     {% elif not is_searched %}
     <div class="col-sm-1">
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <br>
       {{error}}<br>
     </div>

@@ -12,7 +12,7 @@ from accounts.models import  MyUser as User
 
 from .forms import RegistrationForm, UserLoginForm
 
-from .utils import get_foursquare_results, get_history, get_all_logged_in_users
+from .utils import get_foursquare_results, get_history, get_all_logged_in_users, last_active_users
 
 def index(request):
 
@@ -22,21 +22,9 @@ def index(request):
     error_message = ''
     venues = []
     logged_in = False
-
-
-    user_list = User.objects.all()
-    print(user_list)
-
     user = request.user
-    print(user)
 
-
-    user_list = get_all_logged_in_users()
-    print (user)
-    print (user_list)
-    for u in user_list:
-        print(u.username)
-    if request.user.is_authenticated():
+    if user.is_authenticated():
         logged_in = True
     history = get_history(logged_in, user)
     if request.method == "GET":
@@ -52,7 +40,8 @@ def index(request):
         'error_message': error_message,
         'is_searched': is_searched,
         'logged_in': logged_in,
-        'username': user.username
+        'username': user.username,
+        'last_active_users': last_active_users()
         })
 
 def add_to_favorites(request):
@@ -106,7 +95,8 @@ def favorites(request):
     'current_page': current_page,
     'favorites': favorites,
     'logged_in': logged_in,
-    'username': user.username
+    'username': user.username,
+    'last_active_users': last_active_users()
     })
 
 def registration(request):

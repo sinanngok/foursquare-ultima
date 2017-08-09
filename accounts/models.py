@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser
 )
 from django.utils import timezone
+import datetime
 
 class MyUserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -59,7 +60,7 @@ class MyUser(AbstractBaseUser):
 
     def was_active_recently(self):
         now = timezone.now()
-        return now - datetime.timedelta(minutes=15) <= self.last_visit <= now
+        return self.last_visit >= timezone.now() - datetime.timedelta(minutes=15)
         was_active_recently.boolean = True
 
     def get_full_name(self):
