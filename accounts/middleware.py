@@ -8,14 +8,13 @@ class SetLastVisitMiddleware(object):
         # One-time configuration and initialization.
 
     def __call__(self, request):
-        # Code to be executed for each request before
-        # the view (and later middleware) are called.
-
-        response = self.get_response(request)
-
         if request.user.is_authenticated():
             # Update last visit time after request finished processing.
             user = User.objects.get(pk=request.user.pk)
             user.last_visit = timezone.now()
             user.save()
+
+        response = self.get_response(request)
+
+
         return response

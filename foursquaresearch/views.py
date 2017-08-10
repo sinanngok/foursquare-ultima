@@ -12,7 +12,7 @@ from accounts.models import  MyUser as User
 
 from .forms import RegistrationForm, UserLoginForm
 
-from .utils import get_foursquare_results, get_history, get_all_logged_in_users, last_active_users
+from .utils import get_foursquare_results, get_history, last_active_users
 
 def index(request):
 
