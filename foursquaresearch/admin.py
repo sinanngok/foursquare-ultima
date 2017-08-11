@@ -1,5 +1,5 @@
 from django.core import serializers
-from django.contrib.auth.models import User
+from accounts.models import  MyUser as User
 from django.contrib import admin
 from .models import PreviousSearch, Favorite, Place
 

@@ -41,6 +41,7 @@ INTERNAL_IPS = [
 INSTALLED_APPS = [
 
     'foursquaresearch',
+    'accounts',
     'suit',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'debug_toolbar',
     'opbeat.contrib.django',
 ]
@@ -70,6 +72,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.SetLastVisitMiddleware',
+
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -107,6 +111,9 @@ DATABASES = {
     }
 }
 
+
+
+AUTH_USER_MODEL = 'accounts.MyUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
