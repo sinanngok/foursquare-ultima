@@ -48,7 +48,7 @@
           <h3>Active users</h3><h5>(last 15 minutes)<br></h5>
           <table class="table table-striped">
             {% for user in last_active_users %}
-              <tr><td>{{user}}</td></tr>
+              <tr><td>{{user|capfirst}}</td></tr>
               {% empty %}
               It feels scary, to have no active user :(
               {% endfor %}

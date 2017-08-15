@@ -1,30 +1,84 @@
 {% extends 'foursquaresearch/base.html' %}
-
+{% load custom_filters %}
 {% block javascript %}
-<script>
-$('.addToFavorite').submit(function(e) {
-  var postData = $(this).serializeArray();
-  var formURL = $(this).attr("action");
-  /* start ajax submission process */
-  $.ajax({
-    url: formURL,
-    type: "POST",
-    data: postData,
-    success: function(data, textStatus, jqXHR) {
-      if (data.favorite_exist) {
-          alert("Place is already in favorites");
-      } else {
-          alert("Place added to favorites");
-      }
-    },
-    error: function(jqXHR, textStatus, errorThrown) {
-      alert('Error occurred!');
-    }
+  <script>
+  $('.addToFavorite').each(function() {
+    var replace = false;
+    $(this).submit(function(event) {
+      event.preventDefault();
 
+      var form = $(this);
+      var postData = $(this).serializeArray();
+      var formURL = $(this).attr("action");
+      $.ajax({
+        url: formURL,
+        type: "POST",
+        data: postData,
+        success: function (data, textStatus, jqXHR) {
+          if (data.favorite_exist) {
+            alert("Something went wrong! It should have turn you to a warewolf!");
+
+          } else {
+            alert("Place added to favorites :)");
+          }
+
+        }
+        posting.done(function(data) {
+          $(this).replaceWith("<div class=\"remove-from-favorite\">\n" +
+                                    "<form action={% url 'remove_from_favorites_while_searching' %} method=\"post\" class='removeFromFavorite'>\n" +
+                                        "{% csrf_token %}\n" +
+                                        "<input type=\"hidden\" name=\"id\" value=\"{{ favorite.place.id }}\"/>\n" +
+                                        "<button type=\"submit\" class=\"btn-link remove-favorite\">DEL</button>\n" +
+                                    "</form>\n" +
+                                "</div>");
+        }).error(function(){
+          alert("An error occured. Shrimply Pibbles needs a new heart.");
+        });
+
+      });
+    });
   });
-  e.preventDefault(); //STOP default action
-  /* ends ajax submission process */
-});
+  </script>
+
+    <script>
+  $('.removeFromFavorite').each(function() {
+    var replace = false;
+    $(this).submit(function(event) {
+      event.preventDefault();
+
+      var form = $(this);
+      var postData = $(this).serializeArray();
+      var formURL = $(this).attr("action");
+      $.ajax({
+        url: formURL,
+        type: "POST",
+        data: postData,
+        success: function (data, textStatus, jqXHR) {
+          if (data) {
+            alert("Place is removed from your favorites");
+
+          } else {
+            alert("Something went wrong! It should have turn you to a vampire!");
+          }
+
+        }
+        posting.done(function(data) {
+          $(this).replaceWith("<div class=\"add-to-favorite\">\n" +
+                                    "<form action={% url 'add_to_favorites' %} method=\"post\" class='addToFavorite'>\n" +
+                                        "{% csrf_token %}\n" +
+                                        "<input type=\"hidden\" name=\"id\" value=\"{{ venue.id }}\"/>\n" +
+                                        "<input type=\"hidden\" name=\"name\" value=\"{{ venue.name }}\"/>\n" +
+                                        "<input type=\"hidden\" name=\"location\" value=\"{{ venue.location.address }}\"/>\n" +
+                                        "<button type=\"submit\" id=\"fav-button-id\" class=\"btn-link add-fav\">FAV</button>\n" +
+                                    "</form>\n" +
+                                "</div>");
+        }).error(function(){
+          alert("An error occured. Be sure that you have a enough of schleem to be repurposed for later batches.");
+        });
+
+      });
+    });
+  });
 </script>
 {% endblock %}
 
@@ -33,71 +87,85 @@ $('.addToFavorite').submit(function(e) {
 <div class="col-sm-1">
 </div>
 <div class="col-sm-5">
-  <h3> Results for {{ what_to_look }} in {{ location|capfirst }}
-    <br><br></h3>
-    <table class="table table-bordered">
-      <tr>
-        <th>Name</th>
-        <th>Checkins</th>
-      </tr>
-      <tr>
-        {% for venue in venues %}
-        <!-- Button trigger modal -->
-        <td>
-          <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal-{{venue.id}}">
-            {{ venue.name }}
-          </button>
-          <!-- Modal -->
-          <div class="modal fade" id="myModal-{{venue.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title" id="myModalLabel">Details</h4>
-                </div>
-                <div class="modal-body">
-                  <table class="table table-bordered">
-                    <tr>
-                      <td>Checkins Count: </td>
-                      <td>{{ venue.stats.checkinsCount }}</td>
-                    </tr>
-                    <tr>
-                      <td>Currently: </td>
-                      <td>{{ venue.hereNow.summary }}</td>
-                    </tr>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </td>
-        <td>{{ venue.stats.checkinsCount }}</td>
-        <td>{{ venue.location.address }}</td>
-        {% if logged_in %}
-        <td>
-          <form action={% url 'add_to_favorites' %} method="post" class='addToFavorite'>
-            {% csrf_token %}
-            <input type="hidden" name="id" value="{{ venue.id }}"/>
-            <input type="hidden" name="name" value="{{ venue.name }}"/>
-            <input type="hidden" name="location" value="{{ venue.location.address }}"/>
-            <button type="submit" class="btn-link">FAV</button>
-          </form>
-        </td>
-        {% endif %}
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-    <div class="col-sm-1">
-    </div>
-    {% elif not is_searched %}
-    <div class="col-sm-1">
-    </div>
-    <div class="col-sm-6">
-      <br>
-      {{error}}<br>
-    </div>
-  {% endif %}
+<h3> Results for {{ what_to_look|capfirst }} in {{ location|capfirst }}
+<br><br></h3>
+<table class="table table-bordered">
+<tr>
+<th>Name</th>
+<th>Checkins</th>
+</tr>
+<tr>
+{% for venue in venues %}
+<!-- Button trigger modal -->
+<td>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#myModal-{{venue.id}}">
+{{ venue.name }}
+</button>
+<!-- Modal -->
+<div class="modal fade" id="myModal-{{venue.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal-dialog" role="document">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<h4 class="modal-title" id="myModalLabel">Details</h4>
+</div>
+<div class="modal-body">
+<table class="table table-bordered">
+<tr>
+<td>Checkins Count: </td>
+<td>{{ venue.stats.checkinsCount }}</td>
+</tr>
+<tr>
+<td>Currently: </td>
+<td>{{ venue.hereNow.summary }}</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</td>
+<td>{{ venue.stats.checkinsCount }}</td>
+<td>{{ venue.location.address }}</td>
+{% if logged_in %}
+<td>
+<div class="favorite-module">
+{% if venue.id in favorite_list %}
+<div class="remove-from-favorite">
+<form action={% url 'remove_from_favorites_while_searching' %} method="post" class='removeFromFavorite'>
+{% csrf_token %}
+<input type="hidden" name="id" value="{{ venue.id }}"/>
+<button type="submit" class="btn-link remove-favorite">DEL</button>
+</form>
+</div>
+{% else %}
+<div class="add-to-favorite">
+<form action={% url 'add_to_favorites' %} method="post" class='addToFavorite'>
+{% csrf_token %}
+<input type="hidden" name="id" value="{{ venue.id }}"/>
+<input type="hidden" name="name" value="{{ venue.name }}"/>
+<input type="hidden" name="location" value="{{ venue.location.address }}"/>
+<button type="submit" id="fav-button-id" class="btn-link add-fav">FAV</button>
+</form>
+</div>
+{% endif %}
+</div>
+</td>
+{% endif %}
+</tr>
+{% endfor %}
+</table>
+</div>
+<div class="col-sm-1">
+</div>
+{% elif not is_searched %}
+<div class="col-sm-1">
+</div>
+<div class="col-sm-6">
+<br>
+{{error}}<br>
+</div>
+{% endif %}
 
-  {% endblock %}
+{% endblock %}

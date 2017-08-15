@@ -1,18 +1,13 @@
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.utils import timezone
-from django.http import HttpResponse
-from django.contrib import messages
-import requests
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
+from django.shortcuts import render, redirect
 
-from .models import  Favorite, Place, PreviousSearch
-from accounts.models import  MyUser as User
-
+from accounts.models import MyUser as User
 from .forms import RegistrationForm, UserLoginForm
-
+from .models import Favorite, Place
 from .utils import get_foursquare_results, get_history, last_active_users
+
 
 def index(request):
 
@@ -23,10 +18,15 @@ def index(request):
     venues = []
     logged_in = False
     user = request.user
+    favorite_list = []
+
 
     if user.is_authenticated():
         logged_in = True
+        favorite_list = list(request.user.favorites.values_list('place__foursquare_id', flat=True))
+        print (favorite_list)
     history = get_history(logged_in, user)
+
     if request.method == "GET":
 
         if what_to_look and location:
@@ -39,10 +39,28 @@ def index(request):
         'venues': venues,
         'error_message': error_message,
         'is_searched': is_searched,
-        'logged_in': logged_in,
         'username': user.username,
+        'favorite_list':favorite_list,
+        'user_id': user.id,
+        'logged_in':logged_in,
         'last_active_users': last_active_users()
         })
+
+def is_place_in_favorites(request):
+
+    if request.method == "POST":
+        foursquare_id = request.POST['id']
+        obj = Place.objects.get(foursquare_id=foursquare_id)
+
+        favorite_exist = Favorite.objects.filter(user=request.user, place=obj).exists()
+
+
+        if data['favorite_exist']:
+            return True
+        else:
+            return False
+            Favorite.objects.create(user=request.user, place=obj)
+        return JsonResponse(data)
 
 def add_to_favorites(request):
 
@@ -60,6 +78,13 @@ def add_to_favorites(request):
         if not data['favorite_exist']:
             Favorite.objects.create(user=request.user, place=obj)
         return JsonResponse(data)
+
+def remove_from_favorites_while_searching(request):
+    if request.method == "POST":
+        foursquare_id = request.POST['id']
+        request.user.favorites.filter(place__foursquare_id=foursquare_id).delete()
+
+        return JsonResponse('True')
 
 def remove_from_favorites(request):
     if request.method == "POST":

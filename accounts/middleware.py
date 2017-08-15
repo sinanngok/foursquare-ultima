@@ -9,8 +9,7 @@ class SetLastVisitMiddleware(object):
     def __call__(self, request):
         if request.user.is_authenticated():
             # Update last visit time before request finished processing.
-            user = User.objects.get(pk=request.user.pk)
-            user.last_visit = timezone.now()
-            user.save()
+            request.user.last_visit = timezone.now()
+            request.user.save(update_fields=['last_visit'])
         response = self.get_response(request)
         return response

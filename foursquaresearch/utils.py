@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.sessions.models import Session
 from django.utils import timezone
 import requests
 import json
 
-from .models import PreviousSearch
+from .models import PreviousSearch, Favorite, Place
 from accounts.models import  MyUser as User
 
 def get_foursquare_results(location, what_to_look, venues, error_message, is_searched, logged_in, user):
@@ -28,6 +27,7 @@ def get_foursquare_results(location, what_to_look, venues, error_message, is_sea
     data = response.json()
 
     if response.status_code == 200:   #checks if the location parameter is true
+
         venues = data["response"]["venues"]
 
         if venues:    #checks if there is anything found
@@ -51,6 +51,20 @@ def get_history(logged_in, user):
         history = PreviousSearch.objects.order_by('-created_date')[:5]
 
     return (history)
+
+def is_place_in_favorites(request):
+
+    foursquare_id = request.POST['id']
+    obj = Place.objects.get(foursquare_id=foursquare_id)
+
+    favorite_exist = Favorite.objects.filter(user=request.user, place=obj).exists()
+
+    if data['favorite_exist']:
+        return True
+    else:
+        return False
+        Favorite.objects.create(user=request.user, place=obj)
+    return JsonResponse(data)
 
 """def get_all_logged_in_users():   #according to their session dates
     # Query all non-expired sessions
