@@ -13,14 +13,14 @@
   <header>
     <div class="row">
       <div class="col-sm-1">
-        <center>
+        <div style="text-align: center;">
           {% now "SHORT_DATETIME_FORMAT" %}
-        </center>
+        </div>
       </div>
       <div class="col-sm-8">
-        <center>
+        <div style="text-align: center;">
           <h1><a href="/">The Ultimate Foursquare Client</a></h1>
-        </center>
+        </div>
       </div>
       <div>
         {% if user.is_authenticated %}
@@ -59,13 +59,13 @@
     {% endblock %}
   </main>
 <footer>
-<script type="text/javascript">
+{% comment %}<script type="text/javascript">
 jQuery(document).ready(function($) {
   $(".clickable-row").click(function() {
     window.location = $(this).data("action");
   });
 });
-</script>
+</script>{% endcomment %}
 {% block javascript %}{% endblock %}
 </footer>
 </body>

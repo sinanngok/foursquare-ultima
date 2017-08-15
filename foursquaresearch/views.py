@@ -30,7 +30,7 @@ def index(request):
     if request.method == "GET":
 
         if what_to_look and location:
-            location, what_to_look, venues, error_message, is_searched = get_foursquare_results(location, what_to_look, venues, error_message, is_searched, logged_in, user)
+            venues, error_message, is_searched = get_foursquare_results(location, what_to_look, venues, error_message, is_searched, logged_in, user)
 
         return render(request, 'foursquaresearch/imlookingfor.html', {
         'history': history,
@@ -82,9 +82,14 @@ def add_to_favorites(request):
 def remove_from_favorites_while_searching(request):
     if request.method == "POST":
         foursquare_id = request.POST['id']
+        print(foursquare_id)
+        print (request.user.favorites.filter(place__foursquare_id=foursquare_id))
         request.user.favorites.filter(place__foursquare_id=foursquare_id).delete()
+        data = {
+            'status': True
+        }
 
-        return JsonResponse('True')
+        return JsonResponse(data)
 
 def remove_from_favorites(request):
     if request.method == "POST":

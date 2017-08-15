@@ -58,7 +58,7 @@
       </div>
       {% endblock %}
     </div>
-    <script>
+    {% comment %}<script>
 
     $(".clickable-row").click(function() {
       var getData = $(this).serializeArray();
@@ -92,5 +92,5 @@
       e.preventDefault(); //STOP default action
       /* ends ajax submission process */
     });
-    </script>
+    </script>{% endcomment %}
     {% endblock %}

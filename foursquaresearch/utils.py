@@ -42,7 +42,7 @@ def get_foursquare_results(location, what_to_look, venues, error_message, is_sea
     else:
         error_message = "Location not found, please try somewhere else."
 
-    return (location, what_to_look, venues, error_message, is_searched)
+    return (venues, error_message, is_searched)
 
 def get_history(logged_in, user):
     if logged_in:
