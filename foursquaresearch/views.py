@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 
 from accounts.models import MyUser as User
 from .forms import RegistrationForm, UserLoginForm
@@ -24,7 +25,6 @@ def index(request):
     if user.is_authenticated():
         logged_in = True
         favorite_list = list(request.user.favorites.values_list('place__foursquare_id', flat=True))
-        print (favorite_list)
     history = get_history(logged_in, user)
 
     if request.method == "GET":
@@ -46,22 +46,37 @@ def index(request):
         'last_active_users': last_active_users()
         })
 
-def is_place_in_favorites(request):
-
+def favorite_handler(request):
     if request.method == "POST":
-        foursquare_id = request.POST['id']
-        obj = Place.objects.get(foursquare_id=foursquare_id)
+        if 'add-to-favorite' in request.POST:
+            foursquare_id = request.POST['id']
+            name = request.POST['name']
+            location = request.POST['location']
+            obj, created = Place.objects.get_or_create(
+                foursquare_id=foursquare_id,
+                defaults={'name': name, 'location': location},
+            )
+            data = {
+                'favorite_exist': Favorite.objects.filter(user=request.user, place=obj).exists()
+            }
+            if not data['favorite_exist']:
+                Favorite.objects.create(user=request.user, place=obj)
+            return JsonResponse(data)
+        elif 'remove-from-favorite' in request.POST:
+            foursquare_id = request.POST['id']
+            print(foursquare_id)
+            print (request.user.favorites.filter(place__foursquare_id=foursquare_id))
+            request.user.favorites.filter(place__foursquare_id=foursquare_id).delete()
+            data = {
+                'status': True
+            }
 
-        favorite_exist = Favorite.objects.filter(user=request.user, place=obj).exists()
-
-
-        if data['favorite_exist']:
-            return True
+            return JsonResponse(data)
         else:
-            return False
-            Favorite.objects.create(user=request.user, place=obj)
-        return JsonResponse(data)
+            print ("höbölö")
+            return redirect('index')
 
+@csrf_exempt
 def add_to_favorites(request):
 
     if request.method == "POST":
@@ -79,6 +94,7 @@ def add_to_favorites(request):
             Favorite.objects.create(user=request.user, place=obj)
         return JsonResponse(data)
 
+@csrf_exempt
 def remove_from_favorites_while_searching(request):
     if request.method == "POST":
         foursquare_id = request.POST['id']

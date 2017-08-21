@@ -4,7 +4,7 @@
 <div class="col-sm-1">
 </div>
 <div class="col-sm-5">
-  <center>
+  <div style="text-align: center;">
     <h3>Favorite Places<br></h3>
     <div>
       <table class="table table-bordered">
@@ -25,6 +25,8 @@
             </form>
           </td>
         </tr>
+              {% empty %}
+              You didn't like anything :(
         {% endfor %}
       </table>
     </div>
@@ -33,26 +35,28 @@
         <table>
           <tr>
             {% if favorites.has_previous %}
-            <td><a href="?page={{ favorites.previous_page_number }}">previous</a></td>
+            <td><a href="?page={{ favorites.previous_page_number }}">
+                <button type="button" class="btn btn-info">PREV</button></a></td>
             {% endif %}
             {% for page in num_pages %}
             <td>
               {% if page == favorites.number %}
-              <span class="current">{{page}}</span>
+              <span class="current btn btn-primary">{{ page }}</span>
               {% else %}
-              <span class="other-page"><a href="?page={{ page }}">{{ page }}</a></span>
+              <span class="other-page"><a href="?page={{ page }}">
+                  <button type="button" class="btn btn-info">{{ page }}</button></a></span>
               {% endif %}
             </td>
             {% endfor %}
-
             {% if favorites.has_next %}
-            <td><a href="?page={{ favorites.next_page_number }}">next</a></td>
+            <td><a href="?page={{ favorites.next_page_number }}">
+                <button type="button" class="btn btn-info">NEXT</button></a></td>
             {% endif %}
           </tr>
         </table>
       </span>
     </div>
-  </center>
+  </div>
 </div>
 <div class="col-sm-1">
 </div>

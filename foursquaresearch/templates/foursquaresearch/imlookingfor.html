@@ -1,16 +1,19 @@
 {% extends 'foursquaresearch/base.html' %}
+{% load i18n %}
 {% load custom_filters %}
 {% block javascript %}
     <script>
-        $('.addToFavorite').each(function() {
-            var replace = false;
+        $('.addToFavorite').each(addFavorite);
+        $('.removeFromFavorite').each(removeFavorite);
+
+        function addFavorite() {
             $(this).submit(function(event) {
                 event.preventDefault();
 
                 var form = $(this);
-                console.log(form)
                 var postData = $(this).serializeArray();
-                var formURL = $(this).attr("action");
+                var formURL = "{% url 'add_to_favorites' %}";
+
                 $.ajax({
                     url: formURL,
                     type: "POST",
@@ -20,44 +23,44 @@
                             alert("Something went wrong! It should have turn you to a warewolf!");
 
                         } else {
-                            form.replaceWith("<form action={% url 'remove_from_favorites_while_searching' %} method=\"post\" class='removeFromFavorite'>\n" +
-                                "{% csrf_token %}\n" +
-                                "<input type=\"hidden\" name=\"id\" value=\""+postData[1].value+"\"/>\n" +
-                                "<input type=\"hidden\" name=\"name\" value=\""+postData[2].value+"\"/>\n" +
-                                "<input type=\"hidden\" name=\"location\" value=\""+postData[3].value+"\"/>\n" +
-                                "<button type=\"submit\" class=\"btn-link remove-favorite\">DEL</button>\n" +
-                                "</form>");
+                            removeFromFavoriteForm = "<form id=\""+postData[0].value+"\" class='removeFromFavorite'>\n" +
+                                "<input type=\"hidden\" name=\"id\" value=\""+postData[0].value+"\"/>\n" +
+                                "<input type=\"hidden\" name=\"name\" value=\""+postData[1].value+"\"/>\n" +
+                                "<input type=\"hidden\" name=\"location\" value=\""+postData[2].value+"\"/>\n" +
+                                "<button class=\"btn-link remove-favorite\">DEL</button>\n" +
+                                "</form>"
+                            form.replaceWith(removeFromFavoriteForm);
+                            console.log(document.getElementById(postData[0].value));
+                            document.getElementById(postData[0].value).addEventListener("submit", removeFavorite());
+
                         }
-
                     }
-
                 });
             });
-        });
-    </script>
+        };
 
-    <script>
-        $('.removeFromFavorite').each(function() {
-            var replace = false;
+        function removeFavorite() {
             $(this).submit(function(event) {
                 event.preventDefault();
 
                 var form = $(this);
                 var postData = $(this).serializeArray();
-                var formURL = $(this).attr("action");
+                var formURL = "{% url 'remove_from_favorites_while_searching' %}";
                 $.ajax({
                     url: formURL,
                     type: "POST",
                     data: postData,
+
                     success: function (data, textStatus, jqXHR) {
                         if (data.status) {
-                            form.replaceWith("<form action={% url 'add_to_favorites' %} method=\"post\" class='addToFavorite'>\n" +
-                                "{% csrf_token %}\n" +
-                                "<input type=\"hidden\" name=\"id\" value=\""+postData[1].value+"\"/>\n" +
-                                "<input type=\"hidden\" name=\"name\" value=\""+postData[2].value+"\"/>\n" +
-                                "<input type=\"hidden\" name=\"location\" value=\""+postData[3].value+"\"/>\n" +
-                                "<button type=\"submit\" id=\"fav-button-id\" class=\"btn-link add-fav\">FAV</button>\n" +
-                                "</form>");
+                            addToFavoriteForm = "<form id=\""+postData[0].value+"\" class='addToFavorite'>\n" +
+                                "<input type=\"hidden\" name=\"id\" value=\""+postData[0].value+"\"/>\n" +
+                                "<input type=\"hidden\" name=\"name\" value=\""+postData[1].value+"\"/>\n" +
+                                "<input type=\"hidden\" name=\"location\" value=\""+postData[2].value+"\"/>\n" +
+                                "<button class=\"btn-link add-fav\">FAV</button>\n" +
+                                "</form>"
+                            form.replaceWith(addToFavoriteForm);
+                            document.getElementById(postData[0].value).addEventListener("submit", addFavorite());
 
                         } else {
                             alert("Something went wrong! It should have turn you to a vampire!");
@@ -67,7 +70,8 @@
 
                 });
             });
-        });
+        };
+
     </script>
 {% endblock %}
 
@@ -121,23 +125,20 @@
                             <td>
                                 <div class="favorite-module">
                                     {% if venue.id in favorite_list %}
-                                        <form action={% url 'remove_from_favorites_while_searching' %} method="post" class='removeFromFavorite'>
-                                            {% csrf_token %}
+                                        <form id="{{ venue.id }}" class='removeFromFavorite'>
                                             <input type="hidden" name="id" value="{{ venue.id }}"/>
                                             <input type="hidden" name="name" value="{{ venue.name }}"/>
                                             <input type="hidden" name="location" value="{{ venue.location.address }}"/>
-                                            <button type="submit" class="btn-link remove-favorite">DEL</button>
+                                            <button class="btn-link remove-favorite">DEL</button>
                                         </form>
                                     {% else %}
-                                        <form action={% url 'add_to_favorites' %} method="post" class='addToFavorite'>
-                                            {% csrf_token %}
+                                        <form id="{{ venue.id }}" class='addToFavorite'>
                                             <input type="hidden" name="id" value="{{ venue.id }}"/>
                                             <input type="hidden" name="name" value="{{ venue.name }}"/>
                                             <input type="hidden" name="location" value="{{ venue.location.address }}"/>
-                                            <button type="submit" id="fav-button-id" class="btn-link add-fav">FAV</button>
+                                            <button class="btn-link add-fav">FAV</button>
                                         </form>
                                     {% endif %}
-
                                 </div>
                             </td>
                         {% endif %}
